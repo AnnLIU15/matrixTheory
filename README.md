@@ -28,7 +28,7 @@
 ## 项目结构
 
 > * algo        -- 核心算法文件
-> * utils        -- 除了核心算法外的function
+> * utils        -- 除了核心算法外的function（yaml基于[Google Code Archive - Long-term storage for Google Code Project Hosting.](https://code.google.com/archive/p/yamlmatlab/)）
 > * assets     -- 图像资源
 > * output    -- 算法输出结果
 
@@ -39,6 +39,13 @@
 * - [X] TNNR-ADMM
 * - [X] TNNR-APGL
 * - [ ] TNNR-ADMMAP -- 字符迭代
+
+---
+
+对比算法
+
+- [X] opt-space
+- [X] SVT & SVP[HauLiang/Matrix-Completion-Methods: Several Classic Low-Rank Matrix Completion Methods, such as SVP, SVT, Sp-lp, and TNNR-ADMM... (github.com)](https://github.com/HauLiang/Matrix-Completion-Methods)
 
 ## 要求
 

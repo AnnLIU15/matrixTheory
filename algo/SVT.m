@@ -3,7 +3,7 @@ function SVT_recon = SVT(mask_image,mask,tao,step,maxIter,tol)
 % This code implements the SVT algorithm
 %
 % More information about SVT can be found in the paper:
-%    Cai, Jian-Feng and Cand®®s, Emmanuel J and Shen, Zuowei, 
+%    Cai, Jian-Feng and Cand√®s, Emmanuel J and Shen, Zuowei, 
 %    "A singular value thresholding algorithm for matrix completion", 
 %    SIAM Journal on optimization, 2010.
 %

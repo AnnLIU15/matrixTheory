@@ -1,0 +1,7 @@
+algo: 
+  - SVP
+vars:
+  tol: 1e-4
+  maxIter: 1000
+  mask_samp_rate: 0.3
+  rankk: 10
