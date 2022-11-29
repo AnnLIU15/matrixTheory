@@ -25,6 +25,10 @@
   git push origin master
   ```
 
+## 运行方式
+
+调用main,run 子文件夹xxxx
+
 ## 项目结构
 
 > * algo        -- 核心算法文件
