@@ -1,10 +1,5 @@
 %% add path
 close all; clear ; clc;
-% addpath pic ;
-% addpath mask ;
-% addpath function ;
-% addpath TNNR-admm;
-% addpath TNNR-apgl;
 addpath(genpath(cd));
 
 %% read image files directory information
