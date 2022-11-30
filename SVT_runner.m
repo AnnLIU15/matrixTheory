@@ -18,13 +18,10 @@ end
 
 %% Load origin figure
 ori_img = imread('assets/RGB_figure.jpg');
-ori_img_d = double(ori_img);
 
-%% Normalize R, G, and B channels, respectively
+%% Normalize the image(uint8)
+ori_img_d = img2d(ori_img);
 img_R = ori_img_d(:,:,1); img_G = ori_img_d(:,:,2); img_B = ori_img_d(:,:,3);
-min_R = min(img_R(:)); Io_R = img_R-min_R; img_R = Io_R/max(Io_R(:));
-min_G = min(img_G(:)); Io_G = img_G-min_G; img_G = Io_G/max(Io_G(:)); 
-min_B = min(img_B(:)); Io_B = img_B-min_B; img_B = Io_B/max(Io_B(:));
 
 %% Random mask
 [nx,ny,~] = size(ori_img_d);

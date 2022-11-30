@@ -1,23 +1,24 @@
-clc 
-clear
-
+%% Experiment setup
+clc; clear; close all;
+addpath(genpath(cd));
 m = 100;
 n = 200;
+R = 10;
 max_iter = 1000;
 tol = 1e-3;
 
-para.outer_iter = 100;     % maximum number of iteration
+para.outer_iter = 10;     % maximum number of iteration
 para.outer_tol = 1e-3;     % tolerance of iteration
 
-para.admm_iter = 200;    % iteration of the ADMM optimization
+para.admm_iter = 30;    % iteration of the ADMM optimization
 para.admm_tol = 1e-4;    % epsilon of the ADMM optimization
 para.admm_rho = 5e-2;    % rho of the ADMM optimization     beta
 
-para.apgl_iter = 200;    % iteration of the APGL optimization
+para.apgl_iter = 30;    % iteration of the APGL optimization
 para.apgl_tol = 1e-4;    % epsilon of the APGL optimization
 para.apgl_lambda = 5e-2; % lambda of the APGL optimization
 
-para.admmap_iter = 200;  % iteration of the ADMMAP optimization
+para.admmap_iter = 30;  % iteration of the ADMMAP optimization
 para.admmap_tol = 1e-4;  % epsilon of the ADMMAP optimization
 para.admmap_rho = 2;     % rho0 of the ADMMAP optimization
 para.admmap_kappa = 1e-3;% kappa of the ADMMAP optimization
@@ -25,7 +26,6 @@ para.admmap_beta = 1; % beta0 of the ADMMAP optimization
 para.admmap_betamax = 1e10; % max beta of the ADMMAP optimization
 %% different noise levels and different observed ratios
 samp_rate = 0.9;
-R = 10;
 for ii = 1:10
     s = 0.1 * ii;
     % Generating matrix
@@ -36,7 +36,7 @@ for ii = 1:10
     mask = zeros(m, n);
     mask(randperm(m*n, round(samp_rate*m*n))) = 1;
     missing = ones(size(mask)) - mask; 
-    X = X .*mask;
+    X = X .* mask;
     % SVT
     tau = sqrt(m*n); 
     step = 1.2 * samp_rate; 
@@ -50,7 +50,7 @@ for ii = 1:10
     Opt_recon = OPTSPACE(X, R);
 
     % TNNR-admm
-    [admm_recon, ~] = admm_mat(M, X, mask, R, para);
+    admm_recon = admm_mat(M, X, mask, R, para);
     
     % TNNR-apgl
     [apgl_recon, ~] = apgl_mat(M, X, mask, R, para);
@@ -69,11 +69,12 @@ end
 
 % plot and save results
 s = 0.1:0.1:1;
-set(gcf,'color','none'); % background color -> none
-set(gca,'color','none'); % axis color -> none
+
 plot(s, SVT_erec, '-sc', s, SVP_erec, '-om', s, Opt_erec, '-dg', ...
     s, admm_erec, '-^k', s, apgl_erec, '->b', s, admmap_erec, '-+r');
 xlim([0.1 1]);
+set(gcf,'color','none'); % background color -> none
+set(gca,'color','none'); % axis color -> none
 xlabel('Noise level');
 ylabel('Total reconstruction error');
 legend('SVT', 'SVP', 'Optspace', 'admm', 'apgl', 'admmap','Location','northwest');
@@ -83,7 +84,7 @@ legend('boxoff');
 save_dir = '../output/fig2/';
 % setting save dir
 if ~exist(save_dir, 'dir'), mkdir(save_dir); end
-print(gcf, '-dpdf',[save_dir,'/fig2_',num2str(samp_rate),'.eps'])
+print(gcf, '-dpdf',[save_dir,'/fig2_',num2str(samp_rate),'.pdf'])
 
 %% different observed ratios on matrices with different ranks
 clear SVT_ecer SVP_erec Opt_erec admm_erec apgl_erec admmap_erec
@@ -112,7 +113,7 @@ for R = 1:15  % rank
     Opt_recon = OPTSPACE(X, R);
 
     % TNNR-admm
-    [admm_recon, ~] = admm_mat(M, X, mask, R, para);
+    admm_recon = admm_mat(M, X, mask, R, para);
     
     % TNNR-apgl
     [apgl_recon, ~] = apgl_mat(M, X, mask, R, para);
@@ -137,11 +138,12 @@ end
 
 %% plot and save result
 R = 1:15;
-set(gcf,'color','none'); % background color -> none
-set(gca,'color','none','xtick',1:15); % axis color -> none
+
 plot(R, SVT_erec(1:15), '-sc', R, SVP_erec(1:15), '-om', R, Opt_erec(1:15), '-dg', R, admm_erec(1:15), '-^k', R, apgl_erec(1:15), '->b', R, admmap_erec(1:15), '-+r');
 xlim([1 15]);
 xlabel('Rank');
+set(gcf,'color','none'); % background color -> none
+set(gca,'color','none','xtick',1:15); % axis color -> none
 ylabel('Total reconstruction error');
 legend('SVT', 'SVP', 'Optspace', 'admm', 'apgl', 'admmap','Location','northwest');
 legend('boxoff');
@@ -150,4 +152,4 @@ legend('boxoff');
 save_dir = '../output/fig3/';
 % setting save dir
 if ~exist(save_dir, 'dir'), mkdir(save_dir); end
-print(gcf, '-dpdf',[save_dir,'/fig3_',num2str(samp_rate),'.eps'])
+print(gcf, '-dpdf',[save_dir,'/fig3_',num2str(samp_rate),'.pdf'])
