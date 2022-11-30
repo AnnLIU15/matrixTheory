@@ -15,19 +15,19 @@ obj_val = zeros(max_iter, 1);
 
 [m, n] = size(X);
 C = zeros(2*m, 2*n);
-C(m+1:2*m, n+1:2*n) = X;
+C(m+1:2*m, n+1:2*n) = M .* known;
 
 for k = 1 : max_iter
     % X update
     last_X = X;
-    temp = W - 1/beta * Aadj(Y);
+    temp = W - 1/beta * Y(1:m, 1:n);
     [U, sigma, V] = svd(temp);
-    X = U * (sign(sigma) * max(abs(sigma) - 1/beta, 0)) * V';
+    X = U * max(sigma - 1/beta, 0) * V';
 
     % W update
     last_W = W;
     W = 1/(2*beta) * (beta * (M - X) - (AB + Y(1:m, 1:n) + Y(m+1:2*m, n+1:2*n))) .* known...
-        + X + 1/beta * (AB + Aadj(Y));
+        + X + 1/beta * (AB + Y(1:m, 1:n));
 
     % Y update
     Y = Y + beta * (Aopr(X)+Bopr(W, known)-C);
@@ -59,8 +59,7 @@ for k = 1 : max_iter
         fprintf('    iter %d, obj value=%.4f\n', k, obj_val(k));        
         break;
     end
-    if k == max_iter
-       fprintf('beta = %.4f\n', beta);
+
 end
 
 X_opt = X;

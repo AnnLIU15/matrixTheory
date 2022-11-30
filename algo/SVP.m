@@ -32,7 +32,7 @@ for iter = 1:maxIter
     % Update Y
     Y = X-step*(mask.*X-mask_image);
     Y(PICKS) = mask_image(PICKS);
-    Y = abs(Y);    
+%     Y = abs(Y);    
    
     % Singular value decomposition 
     [U,S0,V] = svd(Y,'econ'); 
@@ -40,8 +40,10 @@ for iter = 1:maxIter
     S = S1(1:k,1);  %(1:rank_r,1)
  
     % Update X
-    Xtemp = X; X = U(:,1:k)*diag(S)*(V(:,1:k))';
-    X(PICKS) = mask_image(PICKS); X = abs(X);
+    Xtemp = X; 
+    X = U(:,1:k)*diag(S)*(V(:,1:k))';
+    X(PICKS) = mask_image(PICKS); 
+%     X = abs(X);
 
     % Stopping criteria
     TOLL = norm(X-Xtemp,'fro')/max(norm(X,'fro'),1);
