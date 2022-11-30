@@ -3,10 +3,10 @@ base:
   n: 200
   tol: 1e-4
   max_iter: 1000
-  r0: 10
-  noise_length: 10
-  save_dir: "../output/fig2/"
-  fig_name: "fig2"
+  sigma0: 0.5
+  rank_length: 15
+  save_dir: "../output/fig3/"
+  fig_name: "fig3"
 
 outer_iter    : 10   
 outer_tol     : 1e-3  
