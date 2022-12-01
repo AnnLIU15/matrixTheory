@@ -1,11 +1,17 @@
 # matrix Theory
 
+
+
 2022-autumn sysu-seit matrix theory final project
 
-|                          Author                          |                            Email                            |
-| :-------------------------------------------------------: | :----------------------------------------------------------: |
+|                            Author                            |                            Email                             |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
 | [AnnLIU15 (ZhaoY) (github.com)](https://github.com/AnnLIU15) | [liuzhy86@mail2.sysu.edu.cn](mailto:liuzhy86@mail2.sysu.edu.cn) |
 |      [zxh1128 (github.com)](https://github.com/zxh1128)      |                                                              |
+
+<div align='center'>
+    <font color="red" size=4><b>华哥 我的超人</b></font>
+</div>
 
 ## git 教程
 
