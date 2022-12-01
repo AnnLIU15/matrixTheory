@@ -58,12 +58,12 @@ for ii = 1:10
     % TNNR-admmap
     [admmap_recon, ~] = admmap_mat(M, X, mask, R, para);
     
-    SVT_erec(ii) = norm(vec((M-SVT_recon).*missing), 'fro');
-    SVP_erec(ii) = norm(vec((M-SVP_recon).*missing), 'fro');
-    Opt_erec(ii) = norm(vec((M-Opt_recon).*missing), 'fro');
-    admm_erec(ii) = norm(vec((M-admm_recon).*missing), 'fro');
-    apgl_erec(ii) = norm(vec((M-apgl_recon).*missing), 'fro');
-    admmap_erec(ii) = norm(vec((M-admmap_recon).*missing), 'fro');
+    SVT_erec(ii) =      norm(vec((M-SVT_recon).*missing), 'fro');
+    SVP_erec(ii) =      norm(vec((M-SVP_recon).*missing), 'fro');
+    Opt_erec(ii) =      norm(vec((M-Opt_recon).*missing), 'fro');
+    admm_erec(ii) =     norm(vec((M-admm_recon).*missing), 'fro');
+    apgl_erec(ii) =     norm(vec((M-apgl_recon).*missing), 'fro');
+    admmap_erec(ii) =   norm(vec((M-admmap_recon).*missing), 'fro');
    
 end
 

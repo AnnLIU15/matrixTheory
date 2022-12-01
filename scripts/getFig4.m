@@ -4,7 +4,6 @@ addpath(genpath(cd));
 
 %% config loading
 config = ReadYaml('../configs/fig4.yaml');
-if ~exist(config.base.save_dir, 'dir'), mkdir(config.base.save_dir); end
 rgb_fig = imread(config.base.img_path);
 gray_fig = rgb2gray(rgb_fig);
 [m,n] = size(gray_fig);
@@ -15,28 +14,27 @@ gray_fig_d = double(gray_fig);
 masked_fig = gray_fig_d .* mask;
 
 X_best_rec = result.X_best_rec;
-
+tic
 figure;
 subplot(131)
 imshow(gray_fig, [], 'border', 'tight')
-title('(a) Original image')
+xlabel('(a) Original image')
 set(gcf,'color','none'); set(gca,'color','none');
 subplot(132)
 imshow(masked_fig, [], 'border', 'tight')
-title('(b) Masked image')
+xlabel('(b) Masked image')
 set(gcf,'color','none'); set(gca,'color','none');
 subplot(133);
 X_best_rec = clip(X_best_rec, 0, 255);
+X_best_rec = round(X_best_rec);
 imshow(X_best_rec ./ 255, 'border', 'tight');    % show the recovered image
-xlabel('(c) recovered image');
+xlabel('(c) recovered image');  % below the img
 set(gcf,'color','none'); set(gca,'color','none');
-% if ~exist(config.base.save_dir, 'dir'), mkdir(config.base.save_dir); end
-%% initial the output mat
-
+toc
 
 %% saving the results
-
-% save_path = [config.base.save_dir,'/',config.base.fig_name];
-% print(gcf, '-dpdf',[save_path,'.pdf'])
-% print(gcf,[save_path,'.jpeg'] ,'-djpeg','-r300')
-% close all;
+if ~exist(config.base.save_dir, 'dir'), mkdir(config.base.save_dir); end
+save_path = [config.base.save_dir,'/',config.base.fig_name];
+print(gcf, '-dpdf',[save_path,'.pdf'])
+print(gcf,[save_path,'.jpeg'] ,'-djpeg','-r300')
+close all;

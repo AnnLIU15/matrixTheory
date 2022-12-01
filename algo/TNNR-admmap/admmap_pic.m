@@ -105,7 +105,7 @@ for t = 1 : num_iter
     [erec_iter(t), psnr_iter(t)] = PSNR(X_full, X_temp, missing);
 end
 X_best_rec = X_rec(:, :, :, num_iter);
-
+psnr_best = psnr_iter(num_iter);
 % %% display recovered image
 % subplot(1, 3, 3);
 % X_best_rec = max(X_best_rec, 0);
@@ -138,4 +138,5 @@ result.Erec = Erec(min_R:max_R);
 result.Psnr_iter = psnr_iter;
 result.Erec_iter = erec_iter;
 result.X_best_rec = X_best_rec;
+result.psnr_best = psnr_best;
 end
