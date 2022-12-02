@@ -55,14 +55,14 @@ for R = min_R : max_R    % test if each rank is proper for completion
     X_iter = zeros(m, n, dim, max_iter);
     X_temp = zeros(m, n, dim);
     for c = 1 : dim    % process each channel separately
-        fprintf('rank(r)=%d, channel(RGB)=%d\n', R, c);
+        % fprintf('rank(r)=%d, channel(RGB)=%d\n', R, c);
         X = X_miss(:, :, c);
         M = X_full(:, :, c);
         M_fro = norm(M, 'fro');
         last_X = X;
         delta = inf;
         for i = 1 : max_iter
-            fprintf('iter %d\n', i);
+            % fprintf('iter %d\n', i);
             [U, sigma, V] = svd(X);
             A = U(:, 1:R)'; B = V(:, 1:R)';
             [X, iter_count] = admmAXB(A, B, X, M, known(:,:,c), para);
@@ -72,9 +72,9 @@ for R = min_R : max_R    % test if each rank is proper for completion
             total_iter(R, c) = total_iter(R, c) + iter_count;
             
             delta = norm(X - last_X, 'fro') / M_fro;
-            fprintf('||X_k+1-X_k||_F/||M||_F %.4f\n', delta);
+            % fprintf('||X_k+1-X_k||_F/||M||_F %.4f\n', delta);
             if delta < tol
-                fprintf('converged at iter: %d\n', i);
+                % fprintf('converged at iter: %d\n', i);
                 break ;
             end
             last_X = X;

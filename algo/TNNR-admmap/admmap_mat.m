@@ -26,7 +26,7 @@ for i = 1 : max_iter
     iter = iter + c;
     
     if delta < tol
-        fprintf('converged at iter: %d\n', i);
+        % fprintf('converged at iter: %d\n', i);
         break ;
     end
 end

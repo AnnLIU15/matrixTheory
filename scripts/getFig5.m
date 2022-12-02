@@ -8,16 +8,16 @@ tol = config.base.tol; max_iter = config.base.max_iter;
 obs_p_list = 0.4:0.1:0.9;
 obs_p_length = length(obs_p_list);
 %% initial the output mat
-SVT_psnr     = zeros(obs_p_length);
-SVP_psnr     = zeros(obs_p_length);
-Opt_psnr     = zeros(obs_p_length);
-admm_psnr    = zeros(obs_p_length);
-apgl_psnr    = zeros(obs_p_length);
-admmap_psnr  = zeros(obs_p_length);
+SVT_psnr     = zeros(obs_p_length,1);
+SVP_psnr     = zeros(obs_p_length,1);
+Opt_psnr     = zeros(obs_p_length,1);
+admm_psnr    = zeros(obs_p_length,1);
+apgl_psnr    = zeros(obs_p_length,1);
+admmap_psnr  = zeros(obs_p_length,1);
 rgb_fig = imread(config.base.img_path);
 gray_fig = rgb2gray(rgb_fig);
 [m,n] = size(gray_fig);
-gray_fig_d = double(gray_fig);
+gray_fig_d = double(gray_fig)/255;
 SVT_rec_fig    = zeros(m,n);
 SVP_rec_fig    = zeros(m,n);
 Opt_rec_fig    = zeros(m,n);
@@ -37,7 +37,7 @@ for idx_obs_p = 1:obs_p_length
     tau = sqrt(m*n);
     step = 1.2 * obs_p;
     SVT_recon = SVT(X_masked, mask, tau, step, max_iter, tol);
-    [~, SVT_psnr(idx_obs_p)] = PSNR(gray_fig_d, SVT_recon, mask);
+    [~, SVT_psnr(idx_obs_p)] = PSNR(gray_fig_d, SVT_recon, missing);
     for rank_level = 1:20
         % SVP
         step = 1/obs_p/sqrt(max_iter);
@@ -45,12 +45,12 @@ for idx_obs_p = 1:obs_p_length
         % Optspace
         Opt_recon = OPTSPACE(X_masked, rank_level);
         
-        [~, tmp_psnr] = PSNR(gray_fig_d, SVP_recon, mask);
+        [~, tmp_psnr] = PSNR(gray_fig_d, SVP_recon, missing);
         SVP_psnr(idx_obs_p)    = max(tmp_psnr,SVP_psnr(idx_obs_p));
         % if SVP_psnr(idx_obs_p) == max(SVP_psnr)
         %     SVP_rec_fig = SVP_recon;
         % end
-        [~, tmp_psnr] = PSNR(gray_fig_d, Opt_recon, mask);
+        [~, tmp_psnr] = PSNR(gray_fig_d, Opt_recon, missing);
         Opt_psnr(idx_obs_p)    = max(tmp_psnr,Opt_psnr(idx_obs_p));
         % if Opt_psnr(idx_obs_p) == max(Opt_psnr)
         %     Opt_rec_fig = Opt_recon;

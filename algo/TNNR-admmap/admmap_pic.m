@@ -65,9 +65,10 @@ for R = min_R : max_R    % test if each rank is proper for completion
         last_X = X;
         delta = inf;
         for i = 1 : max_iter
-            fprintf('iter %d\n', i);
+            % fprintf('iter %d\n', i);
             [U, sigma, V] = svd(X);
             A = U(:, 1:R)'; B = V(:, 1:R)';
+            
             [X, iter_count] = admmapAXB(A, B, X, M, known(:,:,c), para);
             X_iter(:, :, c, i) = X;       
             
@@ -75,9 +76,9 @@ for R = min_R : max_R    % test if each rank is proper for completion
             total_iter(R, c) = total_iter(R, c) + iter_count;
             
             delta = norm(X - last_X, 'fro') / M_fro;
-            fprintf('||X_k+1-X_k||_F/||M||_F %.4f\n', delta);            
+            % fprintf('||X_k+1-X_k||_F/||M||_F %.4f\n', delta);            
             if delta < tol
-                fprintf('converged at iter: %d\n', i);
+                % fprintf('converged at iter: %d\n', i);
                 break ;
             end
             last_X = X;
@@ -87,6 +88,8 @@ for R = min_R : max_R    % test if each rank is proper for completion
     time_cost(R) = toc(t_rank);
     X_temp = max(X_temp, 0);
     X_temp = min(X_temp, 255);
+    figure;
+    imshow(X_temp/255,[]);
     [Erec(R), Psnr(R)] = PSNR(X_full, X_temp, missing);
     if best_psnr < Psnr(R)
         best_rank = R;

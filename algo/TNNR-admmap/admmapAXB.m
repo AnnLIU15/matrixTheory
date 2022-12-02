@@ -46,8 +46,8 @@ for k = 1 : max_iter
     delta = norm(X - last_X, 'fro') / M_fro;
 
     if delta < tol
-        fprintf('    converged at\n');
-        fprintf('    iter %d, ||X_k+1-X_k||_F/||M||_F=%.4f\n', k, delta);
+        % fprintf('    converged at\n');
+        % fprintf('    iter %d, ||X_k+1-X_k||_F/||M||_F=%.4f\n', k, delta);
         break ;
     end
     
@@ -55,8 +55,8 @@ for k = 1 : max_iter
         + nuclear_norm(X) + beta / 2 * norm(Aopr(X)+Bopr(W, known)-C,'fro')^2;
 
     if k > 1 && abs(obj_val(k) - obj_val(k-1)) < tol
-        fprintf('    converged at\n');
-        fprintf('    iter %d, obj value=%.4f\n', k, obj_val(k));        
+        % fprintf('    converged at\n');
+        % fprintf('    iter %d, obj value=%.4f\n', k, obj_val(k));        
         break;
     end
 
