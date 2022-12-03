@@ -1,16 +1,16 @@
 function M_approx= OPTSPACE(M, r)
-% OPTSPACE Ëã·¨
-% ÊäÈë£º
-%     M: ´ı»Ö¸´µÄ¾ØÕóthe observed matrix
-%     r: Ï£Íû»Ö¸´³öÀ´µÄ¾ØÕóµÄÖÈ
-% Êä³ö£º
-%     M_approx: »Ö¸´¾ØÕó
+% OPTSPACE ç®—æ³•
+% è¾“å…¥ï¼š
+%     M: å¾…æ¢å¤çš„çŸ©é˜µthe observed matrix
+%     r: å¸Œæœ›æ¢å¤å‡ºæ¥çš„çŸ©é˜µçš„ç§©
+% è¾“å‡ºï¼š
+%     M_approx: æ¢å¤çŸ©é˜µ
 %% trimming
 [m, n] = size(M);
 E = logical(M);
 M_E = M;
 
-num = sum(sum(M_E)); % ¾ØÕóÖĞµÄ×Üdegree
+num = sum(sum(M_E)); % çŸ©é˜µä¸­çš„æ€»degree
 
 avg_row = 2 * num/ m;
 avg_col = 2 * num/ n;
@@ -30,11 +30,11 @@ M_trim(:, index_col) = 0;
 X = sqrt(m) * X;
 Y = sqrt(n) * Y;
 
-%S_0 = S(1:r, 1:r)/eps;  %ÔËËãÖĞ²»ĞèÒª
+%S_0 = S(1:r, 1:r)/eps;  %è¿ç®—ä¸­ä¸éœ€è¦
 %%
 MaxIter = 1000;
 tol = 1e-4;
-tau = 1e-3; % ²½³¤³õÖµ
+tau = 1e-3; % æ­¥é•¿åˆå€¼
 
 for k = 1: MaxIter
     S = optimize_F_S(X, Y, M_E, E);
@@ -56,10 +56,10 @@ for k = 1: MaxIter
     Y = Y - t*grad_Y;
     
     eps = norm(E.*(M_E - X*S*Y'), 'fro') / norm(M_E, 'fro');
-    fprintf('%dth iteration: %e \n', k, eps);
+    % fprintf('%dth iteration: %e \n', k, eps);
     
     if (eps < tol)
-        fprintf('convergent');
+        % fprintf('convergent');
         break;
     end
 end
@@ -69,14 +69,14 @@ end
 %%
 function S = optimize_F_S(X, Y, M_E, E)
 % X, Y: the input value of variable in the function F
-% M_E£º the observed matrix
+% M_Eï¼š the observed matrix
 % E: the mask matrix
-% S£ºthe matrix S that minimize the function F given value X, Y
-% Ïë×Å»¯³ÉA*S_ij = bµÄĞÎÊ½Çó½â
+% Sï¼šthe matrix S that minimize the function F given value X, Y
+% æƒ³ç€åŒ–æˆA*S_ij = bçš„å½¢å¼æ±‚è§£
 
 [~, k] = size(X);
 b = X'* M_E * Y;
-b = b(:); %À­³ÉÁĞÏòÁ¿
+b = b(:); %æ‹‰æˆåˆ—å‘é‡
 
 A = zeros(k*k, k*k);
 for i = 1: k
@@ -92,6 +92,6 @@ S = reshape(S, k, k);
 end
 %%
 function F = cost_F(X, Y, S, M_E, E)
-%¼ÆËãËğÊ§º¯Êı
+%è®¡ç®—æŸå¤±å‡½æ•°
 F = sum( sum( ( (X*S*Y' - M_E).*E ).^2 ) )/2 ;
 end

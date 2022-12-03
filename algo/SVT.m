@@ -1,4 +1,4 @@
-function SVT_recon = SVT(mask_image,mask,tao,step,maxIter,tol)
+function SVT_recon = SVT(mask_image,mask,tau,step,maxIter,tol)
 %
 % This code implements the SVT algorithm
 %
@@ -11,8 +11,9 @@ function SVT_recon = SVT(mask_image,mask,tao,step,maxIter,tol)
 % Inputs:
 %    mask_image:  sampled image
 %    mask:  sampled set
-%    tao:   threshold parameter
+%    tau:   threshold parameter
 %    step:  step size
+%    increment: 5 
 %    maxIter:  maximum allowable iterations
 %    tol:   tolerance of convergence criterion
 %
@@ -25,21 +26,24 @@ function SVT_recon = SVT(mask_image,mask,tao,step,maxIter,tol)
 
 % Initialization
 X = mask_image;
-Y = zeros(size(mask_image));
-
+Y = zeros('like', mask_image);
+M_mask_inv = 1 / norm(mask_image,'fro');
+% r_k = 0;
+% l = 5;
 for i = 1:maxIter
-    
+    % s_k = r_k + 1;
     % Singular value decomposition to update X
-    [U,S,V] = svd(Y,'econ'); 
-    S = sign(S).*max(abs(S)-tao,0);
-    XTemp = X; X = U*S*V';
+    [U,S,V] = svd(Y); 
+
+    % XTemp = X; 
+    X = U * wthresh(S,'s',tau) *V';
     
     % Update Y
-    Y = Y+step*mask.*(mask_image-X);
+    Y = Y+step*(mask_image-X);
     Y = mask.*Y;
     
     % Stopping criteria
-    TOLL = norm(mask.*(XTemp-X),'fro')/norm(mask.*X,'fro');
+    TOLL = norm(mask.*X - mask_image,'fro')*M_mask_inv;
     if TOLL<tol
         break;
     end

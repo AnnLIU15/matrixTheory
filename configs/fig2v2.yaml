@@ -1,0 +1,22 @@
+base:
+  m: 100
+  n: 200
+  tol: 1e-4
+  max_iter: 100
+  r0: 10
+  noise_length: 10
+  save_dir: "../output/fig2v2/"
+  fig_name: "fig2"
+  SVT_power : 0.5
+clip_type  : 0 # 0 -> no 1 -> uint8 2 -> 0~1
+outer_iter : 20   
+outer_tol  : 1e-3  
+inner_iter : 100
+tol        : 1e-4
+rho0       : 1.1
+lambda     : 0.05
+kappa      : 1e-3
+beta       : 1
+beta_max   : 1e10
+min_R      : 10
+max_R      : 10
