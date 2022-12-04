@@ -17,7 +17,7 @@ for idx = 1:2
     [row, col] = size(mask);
     if row ~= m || col~=n
         tmp_mask = mask;
-        mask = zeros(size(rgb_fig(:,:,1)));
+        mask = ones(size(rgb_fig(:,:,1)));
         begin = round(([m,n] - [row, col])/2);
         mask(begin(1)+1:begin(1)+row, begin(2)+1:begin(2)+col) = tmp_mask;
     end
@@ -50,7 +50,7 @@ for idx = 1:2
     end
     %% baseline config
     obs_p = sum(mask,'all')/m/n;
-    max_iter = args.base.max_iter; tol = args.base.tol;r0 = args.min_R;
+    max_iter = args.base.max_iter; tol = args.base.tol;r0 = args.base.r0;
     %% SVT
     tau = (m*n)^args.base.SVT_power;
     step = 1.2 * obs_p;

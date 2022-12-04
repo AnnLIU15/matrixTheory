@@ -11,9 +11,9 @@ base:
     - "fig8"
   tol: 1e-4
   max_iter: 1000
-  r0: 10
+  r0: 20
   SVT_power: 0.5
-  delta_2k : 0.1
+  delta_2k : 0.29
 clip_type  : 0 # 0 -> no 1 -> uint8 2 -> 0~1
 outer_iter : 100
 outer_tol  : 1e-3  
@@ -24,5 +24,5 @@ lambda     : 1e-2
 kappa      : 1e-3
 beta       : 1
 beta_max   : 1e10
-min_R      : 5
-max_R      : 5
+min_R      : 10
+max_R      : 10
