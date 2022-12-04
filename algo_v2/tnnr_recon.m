@@ -17,7 +17,10 @@ function [X_l_recon_rank_list, other_info] = tnnr_recon(M_masked, mask, chosen_a
     max_R = args.max_R;        % maximum rank of chosen image
     rank_length = max_R - min_R + 1;
     [m,n,dim] = size(M_masked);
-    M_fro = norm(M_masked, 'fro');
+    M_fro_inv = zeros(dim,1);
+    for idx_dim = 1 : dim
+        M_fro_inv = 1/norm(M_masked(:,:,idx_dim), 'fro');
+    end
     if args.clip_type == 1
         clip_type = @(X)clip(X,0,255);
     elseif args.clip_type == 2
@@ -42,26 +45,29 @@ function [X_l_recon_rank_list, other_info] = tnnr_recon(M_masked, mask, chosen_a
         iter_list = zeros(rank_length,dim);
     end
     for rank_idx = min_R : max_R
-        X_l = M_masked;
-        iter_cnt = 0;
-        for outer_idx = 1 : args.outer_iter
-            %% STEP 1 given X_l
-            [U_l, ~, V_l] = svd(X_l);
-            A_l = U_l(:,1:rank_idx)';
-            B_l = V_l(:,1:rank_idx)';
-            %% choose a function solve step 2
-            [X_lp1, obj_iter] = algo(M_masked,mask,A_l,B_l,args);
-            iter_cnt = iter_cnt + obj_iter.k;
-            early_stop_factor = norm(X_lp1 - X_l,'fro') / M_fro;
-            % display([num2str(outer_idx),'\t',num2str(early_stop_factor)]);
-            if early_stop_factor <= args.outer_tol
-                break;
+        for idx_dim = 1 : dim
+            X_l = M_masked(:,:,idx_dim);
+            iter_cnt = 0;
+            for outer_idx = 1 : args.outer_iter
+               % STEP 1 given X_l
+                [U_l, ~, V_l] = svd(X_l);
+                A_l = U_l(:,1:rank_idx)';
+                B_l = V_l(:,1:rank_idx)';
+               % choose a function solve step 2
+                [X_lp1, obj_iter] = algo(M_masked(:,:,idx_dim),mask,A_l,B_l,args);
+                iter_cnt = iter_cnt + obj_iter.k;
+                early_stop_factor = norm(X_lp1 - X_l,'fro') * M_fro_inv;
+                % display([num2str(outer_idx),'\t',num2str(early_stop_factor)]);
+                if early_stop_factor <= args.outer_tol
+                    break;
+                end
+                X_l = X_lp1;
+                fprintf("%d -> %.5f\n",outer_idx,early_stop_factor)
             end
-            X_l = X_lp1;
+            iter_list(rank_idx,dim) = iter_cnt;
+            X_l = clip_type(X_l);
+            X_l_recon_rank_list(rank_idx - min_R + 1,:,:,idx_dim) = X_l;
         end
-        iter_list(rank_idx,1) = iter_cnt;
-        X_l = clip_type(X_l);
-        X_l_recon_rank_list(rank_idx - min_R + 1,:,:,1) = X_l;
     end
     other_info.iter_list = iter_list;
 end

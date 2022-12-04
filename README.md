@@ -1,11 +1,9 @@
 # matrix Theory
 
-
-
 2022-autumn sysu-seit matrix theory final project
 
-|                            Author                            |                            Email                             |
-| :----------------------------------------------------------: | :----------------------------------------------------------: |
+|                          Author                          |                            Email                            |
+| :-------------------------------------------------------: | :----------------------------------------------------------: |
 | [AnnLIU15 (ZhaoY) (github.com)](https://github.com/AnnLIU15) | [liuzhy86@mail2.sysu.edu.cn](mailto:liuzhy86@mail2.sysu.edu.cn) |
 |      [zxh1128 (github.com)](https://github.com/zxh1128)      |                                                              |
 
@@ -38,7 +36,9 @@
 ## 项目结构
 
 > * algo        -- 核心算法文件
-> * utils        -- 除了核心算法外的function（yaml基于[Google Code Archive - Long-term storage for Google Code Project Hosting.](https://code.google.com/archive/p/yamlmatlab/)）
+> * utils        -- 除了核心算法外的function
+>   * yaml基于[Google Code Archive - Long-term storage for Google Code Project Hosting.](https://code.google.com/archive/p/yamlmatlab/)
+>   * tight_subplot基于[tight_subplot(Nh, Nw, gap, marg_h, marg_w) - File Exchange - MATLAB Central (mathworks.cn)](https://ww2.mathworks.cn/matlabcentral/fileexchange/27991-tight_subplot-nh-nw-gap-marg_h-marg_w)
 > * assets     -- 图像资源
 > * output    -- 算法输出结果
 
