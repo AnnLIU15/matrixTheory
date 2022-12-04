@@ -1,0 +1,28 @@
+base:
+  img_path: 
+    - "../assets/field.jpg"
+    - "../assets/tree.jpg"
+  mask_path: "../assets/string.png"
+  save_dir: 
+    - "../output/fig7/"
+    - "../output/fig8/"
+  fig_name: 
+    - "fig7"
+    - "fig8"
+  tol: 1e-4
+  max_iter: 1000
+  r0: 10
+  SVT_power: 0.5
+  delta_2k : 0.1
+clip_type  : 0 # 0 -> no 1 -> uint8 2 -> 0~1
+outer_iter : 100
+outer_tol  : 1e-3  
+inner_iter : 100
+tol        : 1e-4
+rho0       : 1.01
+lambda     : 1e-2
+kappa      : 1e-3
+beta       : 1
+beta_max   : 1e10
+min_R      : 5
+max_R      : 5

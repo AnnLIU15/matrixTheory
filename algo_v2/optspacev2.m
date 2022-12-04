@@ -70,7 +70,7 @@ function M_approx= optspacev2(M_masked, mask, r,tau, max_iter, tol)
     %%
     function S = optimize_F_S(U, V, M_masked, mask)
     % U, V: the input value of variable in the function F
-    % M_E： the observed matrix
+    % M_E: the observed matrix
     % mask: the mask matrix
     % S：the matrix S that minimize the function F given value U, V
     % 想着化成A*S_ij = b的形式求解
