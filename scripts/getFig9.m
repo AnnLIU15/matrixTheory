@@ -69,7 +69,7 @@ Opt_recon = cat(3,Opt_recon_R,Opt_recon_G,Opt_recon_B);
 fprintf(" %.3fs\n",getMSecDiff(cur_time));
 %% plot
 figure;
-ha = tight_subplot(4,2,[.035 .3],[0.1 0.1],[.01 .01]) ;
+ha = tight_subplot(2,4,[.01 .01],[0.001 0.001],[.001 .001]) ;
 
 axes(ha(1)); 
 imshow(rgb_fig, [], 'border', 'tight')

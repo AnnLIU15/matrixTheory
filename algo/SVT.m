@@ -26,7 +26,7 @@ function SVT_recon = SVT(mask_image,mask,tau,step,maxIter,tol)
 
 % Initialization
 X = mask_image;
-Y = zeros('like', mask_image);
+Y = zeros(size(mask_image));
 M_mask_inv = 1 / norm(mask_image,'fro');
 % r_k = 0;
 % l = 5;

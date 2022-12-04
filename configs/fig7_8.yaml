@@ -1,7 +1,7 @@
 base:
   img_path: 
-    - "../assets/field.jpg"
     - "../assets/tree.jpg"
+    - "../assets/field.jpg"
   mask_path: "../assets/string.png"
   save_dir: 
     - "../output/fig7/"

@@ -4,16 +4,23 @@ addpath(genpath(cd));
 %% args loading
 yaml_str = '../configs/fig7_8.yaml';
 args = ReadYaml(yaml_str);
-mask = imread(args.base.mask_path);
-mask = ~mask;
+
 datetime.setDefaultFormats('default',"yyyy/MM/dd HH:mm:ss:SSS")
 for idx = 1:2
     %% fig loading
     fprintf("Start Fig. %d: %s\n",idx+6,datestr(datetime('now')));
     rgb_fig = imread(args.base.img_path{idx});
-    
+    mask = imread(args.base.mask_path);
+    mask = ~mask;
     rgb_fig = double(rgb_fig)/255;
     [m,n,dim] = size(rgb_fig);
+    [row, col] = size(mask);
+    if row ~= m || col~=n
+        tmp_mask = mask;
+        mask = zeros(size(rgb_fig(:,:,1)));
+        begin = round(([m,n] - [row, col])/2);
+        mask(begin(1)+1:begin(1)+row, begin(2)+1:begin(2)+col) = tmp_mask;
+    end
     masked_fig = rgb_fig .* mask;
 
     %%  ADMM
