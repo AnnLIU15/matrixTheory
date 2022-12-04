@@ -50,9 +50,9 @@ function [X_l_recon_rank_list, other_info] = tnnr_recon(M_masked, mask, chosen_a
             iter_cnt = 0;
             for outer_idx = 1 : args.outer_iter
                % STEP 1 given X_l
-                [U_l, ~, V_l] = svd(X_l);
-                A_l = U_l(:,1:rank_idx)';
-                B_l = V_l(:,1:rank_idx)';
+                [U_l, ~, V_l] = svds(X_l,rank_idx);
+                A_l = U_l';
+                B_l = V_l';
                % choose a function solve step 2
                 [X_lp1, obj_iter] = algo(M_masked(:,:,idx_dim),mask,A_l,B_l,args);
                 iter_cnt = iter_cnt + obj_iter.k;
@@ -62,7 +62,9 @@ function [X_l_recon_rank_list, other_info] = tnnr_recon(M_masked, mask, chosen_a
                     break;
                 end
                 X_l = X_lp1;
-                fprintf("%d -> %.5f\n",outer_idx,early_stop_factor)
+                if mod(outer_idx,10) ==0
+                    fprintf("%d -> %.5f\n",outer_idx,early_stop_factor)
+                end
             end
             iter_list(rank_idx,dim) = iter_cnt;
             X_l = clip_type(X_l);

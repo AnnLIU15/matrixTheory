@@ -10,7 +10,7 @@ function M_approx= OPTSPACE(M, r)
 E = logical(M);
 M_E = M;
 
-num = sum(sum(M_E)); % 矩阵中的总degree
+num = sum(M_E,'all'); % 矩阵中的总degree
 
 avg_row = 2 * num/ m;
 avg_col = 2 * num/ n;

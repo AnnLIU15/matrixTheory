@@ -32,13 +32,10 @@ function SVP_recon = SVP(mask_image,mask,step,k,maxIter,tol)
         % Update Y
         Y = X-step*(mask.*X-mask_image);
         % Singular value decomposition 
-        [U,S0,V] = svd(Y); 
-        S1 = diag(S0);   
-        S = S1(1:k,1);  %(1:rank_r,1)
-     
+        [U,S0,V] = svds(Y,k); 
         % Update X
         Xtemp = X; 
-        X = U(:,1:k)*diag(S)*(V(:,1:k))';
+        X = U*S0*V';
         % Stopping criteria
         TOLL = norm(X-Xtemp,'fro') * M_fro_inv;
         if TOLL < tol
@@ -46,6 +43,7 @@ function SVP_recon = SVP(mask_image,mask,step,k,maxIter,tol)
         end 
         
     end
-SVP_recon = X;
+ 
+    SVP_recon = X;
 end
     

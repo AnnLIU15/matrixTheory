@@ -1,21 +1,22 @@
 base:
   img_path: "../assets/windows.jpg"
   mask_path: "../assets/windows-mask.png"
-  obs_p: 0.5  # 1 - obs_p = mask percent
   save_dir: "../output/fig9/"
   fig_name: "fig9"
   tol: 1e-4
   max_iter: 1000
-  r0: 10
-  SVT_power: 0.75
+  r0: 3
+  SVT_power: 0.5
+  delta_2k : 0.1
 clip_type  : 0 # 0 -> no 1 -> uint8 2 -> 0~1
 outer_iter : 100
 outer_tol  : 1e-3  
-inner_iter : 200
+inner_iter : 100
 tol        : 1e-4
-rho0       : 1.1
-lambda     : 1e-3
+rho0       : 1.01
+lambda     : 1e-2
 kappa      : 1e-3
-beta       : 5e-4
-min_R      : 10
-max_R      : 10
+beta       : 1
+beta_max   : 1e10
+min_R      : 3
+max_R      : 3
