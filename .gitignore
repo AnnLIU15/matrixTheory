@@ -1,4 +1,14 @@
 ref/
-.vscode
 *.asv
 *.mat
+.texpadtmp
+*.toc
+*.synctex(busy)
+*.aux
+*.bbl
+*.blg
+*.log
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.out

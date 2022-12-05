@@ -1,27 +1,21 @@
 base:
   tol: 1e-4
-  max_iter: 1000
+  max_iter: 100
   img_path: "../assets/building.jpg"
   # mask_path: "../assets/string.jpg"
-  obs_p: 0.5  # 1 - obs_p = mask percent
   save_dir: "../output/fig5/"
   fig_name: "fig5"
+  SVT_power : 0.85
 
-
-
-outer_iter    : 100
-outer_tol     : 1e-3
-admm_iter     : 200
-admm_tol      : 1e-4
-admm_rho      : 5e-2
-apgl_iter     : 200
-apgl_tol      : 1e-4
-apgl_lambda   : 5e-2
-admmap_iter   : 200
-admmap_tol    : 1e-4
-admmap_rho    : 1.9
-admmap_kappa  : 1e-3
-admmap_beta   : 1e-3
-admmap_betamax: 1e10
-min_R         : 1
-max_R         : 20
+clip_type  : 0 # 0 -> no 1 -> uint8 2 -> 0~1
+outer_iter : 100
+outer_tol  : 1e-3  
+inner_iter : 200
+tol        : 1e-4
+rho0       : 1.1
+lambda     : 1e-2
+kappa      : 1e-3
+beta       : 1e-3
+beta_max   : 1e10
+min_R      : 5
+max_R      : 5

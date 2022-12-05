@@ -12,7 +12,7 @@ for idx = 1:2
     rgb_fig = imread(args.base.img_path{idx});
     mask = imread(args.base.mask_path);
     mask = ~mask;
-    rgb_fig = double(rgb_fig)/255;
+    rgb_fig = double(rgb_fig);
     [m,n,dim] = size(rgb_fig);
     [row, col] = size(mask);
     if row ~= m || col~=n
@@ -28,10 +28,9 @@ for idx = 1:2
     fprintf("\tStart TNNR-ADMM: %s ->",datestr(cur_time));chosen_algo = "admm";
     X_l_recon_rank_list = tnnr_recon(masked_fig, mask, chosen_algo, args);
     fprintf(" %.3fs\n",getMSecDiff(cur_time));
-    if size(X_l_recon_rank_list,1) == 1
+    if size(X_l_recon_rank_list,1)  == 1
         admm_recon = reshape(X_l_recon_rank_list,m,n,dim);
     end
-    % imshow(clip(admm_recon,0,255) ./ 255, 'border', 'tight');
     %% APGL
     cur_time = datetime('now');
     fprintf("\tStart TNNR-AGPL: %s ->",datestr(cur_time));chosen_algo = "apgl";
@@ -63,7 +62,7 @@ for idx = 1:2
     fprintf(" %.3fs\n",getMSecDiff(cur_time));
     %% SVP
     cur_time = datetime('now');
-    fprintf("\tStart SVP: %s ->",datestr(cur_time));
+    fprintf("\tStart SVP: %s ->",datestr(cur_time));% best r0 = 20;
     step = 1/(1+args.base.delta_2k); %\delta_{2k}<1/3
     SVP_recon_R = SVP(masked_fig(:,:,1),mask,step,r0,max_iter,tol);
     SVP_recon_G = SVP(masked_fig(:,:,2),mask,step,r0,max_iter,tol);
@@ -71,12 +70,12 @@ for idx = 1:2
     SVP_recon = cat(3,SVP_recon_R,SVP_recon_G,SVP_recon_B);
     fprintf(" %.3fs\n",getMSecDiff(cur_time));
     %% OptSpace
-    tau = 1;
+    opt_tau = args.base.opt_tau*10;
     cur_time = datetime('now');
     fprintf("\tStart Optspace: %s ->",datestr(cur_time));
-    Opt_recon_R = optspacev2(masked_fig(:,:,1), mask, r0,tau, max_iter, tol);
-    Opt_recon_G = optspacev2(masked_fig(:,:,2), mask, r0,tau, max_iter, tol);
-    Opt_recon_B = optspacev2(masked_fig(:,:,3), mask, r0,tau, max_iter, tol);
+    Opt_recon_R = optspacev2(masked_fig(:,:,1), mask, r0, opt_tau, max_iter, tol);
+    Opt_recon_G = optspacev2(masked_fig(:,:,2), mask, r0, opt_tau, max_iter, tol);
+    Opt_recon_B = optspacev2(masked_fig(:,:,3), mask, r0, opt_tau, max_iter, tol);
     Opt_recon = cat(3,Opt_recon_R,Opt_recon_G,Opt_recon_B);
     fprintf(" %.3fs\n",getMSecDiff(cur_time));
     %% plot
@@ -84,38 +83,37 @@ for idx = 1:2
     ha = tight_subplot(2,4,[.01 .01],[0.001 0.001],[.001 .001]) ;
 
     axes(ha(1)); 
-    imshow(rgb_fig, [], 'border', 'tight')
+    imshow(rgb_fig./ 255, [], 'border', 'tight')
     title('(a) Original image')
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(2)); 
-    imshow(masked_fig, [], 'border', 'tight')
+    imshow(masked_fig./ 255, [], 'border', 'tight')
     title('(b) Masked image')
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(3)); 
-    imshow(clip(SVT_recon,0,1), 'border', 'tight');    % show the recovered image
+    imshow(clip(SVT_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
     title('(c) SVT');  % below the img
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(4)); 
-    imshow(clip(SVP_recon,0,1), 'border', 'tight');    % show the recovered image
+    imshow(clip(SVP_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
     title('(d) SVP');  % below the img
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(5)); 
-    imshow(clip(Opt_recon,0,1), 'border', 'tight');    % show the recovered image
-    title('(e) Opt');  % below the img
+    imshow(clip(Opt_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
+    title('(e) OptSpace');  % below the img
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(6)); 
-    imshow(clip(admm_recon,0,1), 'border', 'tight');    % show the recovered image
+    imshow(clip(admm_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
     title('(f) tnnr-admm');  % below the img
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(7)); 
-    imshow(clip(apgl_recon,0,1), 'border', 'tight');    % show the recovered image
+    imshow(clip(apgl_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
     title('(g) tnnr-apgl');  % below the img
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(8)); 
-    imshow(clip(admmap_recon,0,1), 'border', 'tight');    % show the recovered image
+    imshow(clip(admmap_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
     title('(h) tnnr-admmap');  % below the img
     set(gcf,'color','none'); set(gca,'color','none');
-    save
     if ~exist(args.base.save_dir{idx}, 'dir'), mkdir(args.base.save_dir{idx}); end
     save_path = [args.base.save_dir{idx},'/',args.base.fig_name{idx}];
     print(gcf, '-dpdf',[save_path,'.pdf'])

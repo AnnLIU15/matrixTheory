@@ -49,8 +49,9 @@ for idx_sigma_level = 1:noise_length
         fprintf(" %.3fs\n",getMSecDiff(cur_time));
         % Optspace
         cur_time = datetime('now');
+        opt_tau = 1e-3;
         fprintf("\t\tStart Optspace: %s ->",datestr(cur_time));
-        Opt_recon = OPTSPACE(M_masked, r0);
+        Opt_recon = optspacev2(M_masked, mask, r0, opt_tau, max_iter, tol);
         fprintf(" %.3fs\n",getMSecDiff(cur_time));
         % TNNR-admm
         cur_time = datetime('now');

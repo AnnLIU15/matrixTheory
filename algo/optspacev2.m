@@ -1,10 +1,10 @@
 function M_approx= optspacev2(M_masked, mask, r,tau, max_iter, tol)
-    % OPTSPACE 算法
-    % 输入：
-    %     M_masked: 待恢复的矩阵the observed matrix
-    %     r: 希望恢复出来的矩阵的秩
-    % 输出：
-    %     M_approx: 恢复矩阵
+    % OPTSPACE 绠楁硶
+    % 杈撳叆锛?
+    %     M_masked: 寰呮仮澶嶇殑鐭╅樀the observed matrix
+    %     r: 甯屾湜鎭㈠鍑烘潵鐨勭煩闃电殑绉?
+    % 杈撳嚭锛?
+    %     M_approx: 鎭㈠鐭╅樀
     
     %% Projection
     [m, n] = size(M_masked);
@@ -33,7 +33,7 @@ function M_approx= optspacev2(M_masked, mask, r,tau, max_iter, tol)
     U = sqrt(m) * U;
     V = sqrt(n) * V;
     
-    %S_0 = S(1:r, 1:r)/epsilon;  %运算中不需要
+    %S_0 = S(1:r, 1:r)/epsilon;  %杩愮畻涓笉闇?瑕?
     %%
     M_E_fro_inv = 1 / norm(M_masked, 'fro');
     
@@ -44,7 +44,6 @@ function M_approx= optspacev2(M_masked, mask, r,tau, max_iter, tol)
         grad_Y = tmp_grad' * U * S;
         
         t = tau;
-        
         for i = 1: 50
             if(cost_F(U - t*grad_X, V - t*grad_Y,S,M_masked, mask) - cost_F(U, V,S,M_masked, mask) < ...
                     t * 0.5 * (norm(grad_X, 'fro')^2 + norm(grad_Y, 'fro')^2))
@@ -72,12 +71,12 @@ function M_approx= optspacev2(M_masked, mask, r,tau, max_iter, tol)
     % U, V: the input value of variable in the function F
     % M_E: the observed matrix
     % mask: the mask matrix
-    % S：the matrix S that minimize the function F given value U, V
-    % 想着化成A*S_ij = b的形式求解
+    % S锛歵he matrix S that minimize the function F given value U, V
+    % 鎯崇潃鍖栨垚A*S_ij = b鐨勫舰寮忔眰瑙?
     
     [~, k] = size(U);
     b = U'* M_masked * V;
-    b = b(:); %拉成列向量
+    b = b(:); %鎷夋垚鍒楀悜閲?
     
     A = zeros(k*k, k*k);
     for i = 1: k
@@ -93,6 +92,6 @@ function M_approx= optspacev2(M_masked, mask, r,tau, max_iter, tol)
     end
     %%
     function F = cost_F(U, V, S, M_masked, mask)
-    %计算损失函数
+    %璁＄畻鎹熷け鍑芥暟
     F = sum( sum( ( (U*S*V' - M_masked).*mask ).^2 ) )/2 ;
     end

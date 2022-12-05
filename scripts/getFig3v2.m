@@ -51,8 +51,9 @@ for rank_level = 1:rank_length
         fprintf(" %.3fs\n",getMSecDiff(cur_time));
         % Optspace
         cur_time = datetime('now');
+        opt_tau = 1e-2;
         fprintf("\t\tStart Optspace: %s ->",datestr(cur_time));
-        Opt_recon = OPTSPACE(M_masked, rank_level);
+        Opt_recon = optspacev2(M_masked, mask, rank_level, opt_tau, max_iter, tol);
         fprintf(" %.3fs\n",getMSecDiff(cur_time));
         % TNNR-admm
         cur_time = datetime('now');
