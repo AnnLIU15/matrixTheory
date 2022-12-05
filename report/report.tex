@@ -14,14 +14,12 @@
 % [preprint] option:
 %     \usepackage[preprint]{neurips_2022}
 
-
+\PassOptionsToPackage{numbers, compress}{natbib}  % ref https://arxiv.org/abs/2209.09407
 % to compile a camera-ready version, add the [final] option, e.g.:
 \usepackage[final]{neurips_2022}
 
-
 % to avoid loading the natbib package, add option nonatbib:
 %    \usepackage[nonatbib]{neurips_2022}
-
 
 % \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
@@ -240,7 +238,7 @@ author/year or numeric, as long as you maintain internal consistency.  As to the
 format of the references themselves, any style is acceptable as long as it is
 used consistently.
 
-
+~\cite{cai.shen200810}
 The documentation for \verb+natbib+ may be found at
 \begin{center}
   \url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
@@ -458,26 +456,9 @@ Note that the Reference section does not count towards the page limit.
 \medskip
 
 
-{
-\small
-
-
-[1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms for
-connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and T.K.\ Leen
-(eds.), {\it Advances in Neural Information Processing Systems 7},
-pp.\ 609--616. Cambridge, MA: MIT Press.
-
-
-[2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS: Exploring
-  Realistic Neural Models with the GEneral NEural SImulation System.}  New York:
-TELOS/Springer--Verlag.
-
-
-[3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of learning and
-recall at excitatory recurrent synapses and cholinergic modulation in rat
-hippocampal region CA3. \it{Journal of Neuroscience} \bf{15}(7):5249-5262.
-}
-
+{\small{}\bibliographystyle{plain}
+\bibliography{report}
+}{\small\par}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
