@@ -3,19 +3,26 @@ base:
   max_iter: 100
   img_path: "../assets/building.jpg"
   # mask_path: "../assets/string.jpg"
-  save_dir: "../output/fig5/"
-  fig_name: "fig5"
-  SVT_power : 0.85
+  save_dir4: "../output/fig4/"
+  save_dir5: "../output/fig5/"
+  save_dir6: "../output/fig6/"
+  fig_name4: "fig4"
+  fig_name5: "fig5"
+  fig_name6: "fig6"
+  SVT_power: 0.8
+  opt_tau  : 1e-3
+  delta_2k : 0.2
 
 clip_type  : 0 # 0 -> no 1 -> uint8 2 -> 0~1
 outer_iter : 100
 outer_tol  : 1e-3  
 inner_iter : 200
 tol        : 1e-4
-rho0       : 1.1
+rho0       : 1.01
 lambda     : 1e-2
 kappa      : 1e-3
 beta       : 1e-3
 beta_max   : 1e10
-min_R      : 5
-max_R      : 5
+min_R      : 1
+max_R      : 1
+obs_p      : 0.5

@@ -1,4 +1,19 @@
 function [X_recon, obj_iter] = admmap(M_masked, mask, A_l, B_l, args)
+    %--------------------------------------------------------------------------
+    % use tnnr-admmap way to reconstruct the iamge
+    %--------------------------------------------------------------------------
+    %     main part of ADMM
+    % 
+    %     Inputs:
+    %         M_masked             --- original image with masked
+    %         mask                 --- index matrix of known elements
+    %         args                 --- struct of parameters
+    %         A_l                  --- low rank X -> U (loop l)
+    %         B_l                  --- low rank X -> V (loop l)
+    %     Outputs: 
+    %         obj_iter             --- result of algorithm(inner iteration times)
+    %         X_recon              --- inner return X_recon
+    %--------------------------------------------------------------------------
     beta_k = args.beta;
     beta_max = args.beta_max;
     rho0 = args.rho0;
@@ -43,7 +58,7 @@ function [X_recon, obj_iter] = admmap(M_masked, mask, A_l, B_l, args)
         W_k = W_kp1;
         Y_k = Y_kp1;
         beta_k = beta_kp1;
-        % eq(37) page 6 col 2
+        % eq(37) page 6 col 2 Obj cal
         obj_val(k) = sum(svd(X_k)) - trace(A_l*W_k*B_l') + ...
             sum(vec(Y_k .* (Aop(X_k) + Bop(W_k,mask) - C))) + ...
             beta_k * 0.5 * norm(Aop(X_k) + Bop(W_k,mask) - C,'fro')^2;

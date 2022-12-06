@@ -1,6 +1,6 @@
 function [X_l_recon_rank_list, other_info] = tnnr_recon(M_masked, mask, chosen_algo, args)
     %--------------------------------------------------------------------------
-    % 
+    % use tnnr way to reconstruct the iamge
     %--------------------------------------------------------------------------
     %     main part of TNNR algorithm (via ADMM/APGL/ADMMAP)
     % 
@@ -21,6 +21,7 @@ function [X_l_recon_rank_list, other_info] = tnnr_recon(M_masked, mask, chosen_a
     for idx_dim = 1 : dim
         M_fro_inv = 1/norm(M_masked(:,:,idx_dim), 'fro');
     end
+    %% choose the clip type
     if args.clip_type == 1
         clip_type = @(X)clip(X,0,255);
     elseif args.clip_type == 2
@@ -28,6 +29,7 @@ function [X_l_recon_rank_list, other_info] = tnnr_recon(M_masked, mask, chosen_a
     else
         clip_type = @(X)X;% do nothing
     end
+    %% choose the algo
     if chosen_algo == "admm"
         algo = @(X, mask, A_l, B_l, args)admm(X, mask, A_l, B_l, args);
     elseif chosen_algo == "apgl"
@@ -37,6 +39,7 @@ function [X_l_recon_rank_list, other_info] = tnnr_recon(M_masked, mask, chosen_a
     else
         error('unknow algo %s',chosen_algo);
     end
+    %% initial the matrix according to the dim
     if dim == 1
         X_l_recon_rank_list = zeros(rank_length, m, n);
         iter_list = zeros(rank_length);

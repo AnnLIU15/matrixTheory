@@ -1,7 +1,22 @@
 function [X_recon, obj_iter] = admm(M_masked, mask, A_l, B_l, args)
+    %--------------------------------------------------------------------------
+    % use tnnr-admm way to reconstruct the iamge
+    %--------------------------------------------------------------------------
+    %     main part of ADMM
+    % 
+    %     Inputs:
+    %         M_masked             --- original image with masked
+    %         mask                 --- index matrix of known elements
+    %         args                 --- struct of parameters
+    %         A_l                  --- low rank X -> U (loop l)
+    %         B_l                  --- low rank X -> V (loop l)
+    %     Outputs: 
+    %         obj_iter             --- result of algorithm(inner iteration times)
+    %         X_recon              --- inner return X_recon
+    %--------------------------------------------------------------------------
     beta = args.beta;
     beta_inv = 1 / args.beta;
-    lambda = args.lambda;
+    lambda = args.lambda;   % unused, just for obj function
     missing_val = ~mask;
     AB = A_l'*B_l;
     M_fro_inv = 1/norm(M_masked, 'fro');
@@ -28,12 +43,11 @@ function [X_recon, obj_iter] = admm(M_masked, mask, A_l, B_l, args)
         X_k = X_kp1;
         W_k = W_kp1;
         Y_k = Y_kp1;
-        % eq(22) page 5 col 1
+        % eq(22) page 5 col 1 Obj cal
         obj_val(k) = sum(svd(X_k)) - trace(A_l*W_k*B_l') + ...
             lambda/2 * norm(X_k - W_k,'fro') ^2 + ...
             trace(Y_k'*(X_k-W_k));
             % lambda = 0.06
-        
     end
     X_recon = X_kp1;
     obj_iter.k = k;

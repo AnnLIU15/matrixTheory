@@ -5,12 +5,14 @@ base:
   max_iter: 100
   r0: 10
   noise_length: 10
-  save_dir: "../output/fig2v2/"
+  save_dir: "../output/fig2/"
   fig_name: "fig2"
   SVT_power : 0.5
+  delta_2k  : 0.2
+  opt_tau   : 1e-3
 clip_type  : 0 # 0 -> no 1 -> uint8 2 -> 0~1
-outer_iter : 20   
-outer_tol  : 1e-3  
+outer_iter : 20
+outer_tol  : 1e-3
 inner_iter : 100
 tol        : 1e-4
 rho0       : 1.1

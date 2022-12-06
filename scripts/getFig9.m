@@ -59,12 +59,12 @@ SVP_recon_B = SVP(masked_fig(:,:,3),mask,step,r0,max_iter,tol);
 SVP_recon = cat(3,SVP_recon_R,SVP_recon_G,SVP_recon_B);
 fprintf(" %.3fs\n",getMSecDiff(cur_time));
 %% OptSpace
-tau = 1;
+tau = args.base.opt_tau;
 cur_time = datetime('now');
 fprintf("Start Optspace: %s ->",datestr(cur_time));
-Opt_recon_R = optspacev2(masked_fig(:,:,1), mask, r0,tau, max_iter, tol);
-Opt_recon_G = optspacev2(masked_fig(:,:,2), mask, r0,tau, max_iter, tol);
-Opt_recon_B = optspacev2(masked_fig(:,:,3), mask, r0,tau, max_iter, tol);
+Opt_recon_R = optspace(masked_fig(:,:,1), mask, r0,tau, max_iter, tol);
+Opt_recon_G = optspace(masked_fig(:,:,2), mask, r0,tau, max_iter, tol);
+Opt_recon_B = optspace(masked_fig(:,:,3), mask, r0,tau, max_iter, tol);
 Opt_recon = cat(3,Opt_recon_R,Opt_recon_G,Opt_recon_B);
 fprintf(" %.3fs\n",getMSecDiff(cur_time));
 %% plot
@@ -103,7 +103,7 @@ axes(ha(8));
 imshow(clip(admmap_recon,0,1), 'border', 'tight');    % show the recovered image
 title('(h) tnnr-admmap');  % below the img
 set(gcf,'color','none'); set(gca,'color','none');
-% save
+%% save
 if ~exist(args.base.save_dir, 'dir'), mkdir(args.base.save_dir); end
 save_path = [args.base.save_dir,'/',args.base.fig_name];
 print(gcf, '-dpdf',[save_path,'.pdf'])

@@ -5,9 +5,11 @@ base:
   max_iter: 100
   sigma0: 0.5
   rank_length: 15
-  save_dir: "../output/fig3v2/"
+  save_dir: "../output/fig3/"
   fig_name: "fig3"
   SVT_power : 0.5
+  delta_2k  : 0.2
+  opt_tau   : 1e-3
 clip_type  : 0 # 0 -> no 1 -> uint8 2 -> 0~1
 outer_iter : 20   
 outer_tol  : 1e-3  

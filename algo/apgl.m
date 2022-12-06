@@ -1,4 +1,19 @@
 function [X_recon, obj_iter] = apgl(M_masked, mask, A_l, B_l, args)
+    %--------------------------------------------------------------------------
+    % use tnnr-apgl way to reconstruct the iamge
+    %--------------------------------------------------------------------------
+    %     main part of ADMM
+    % 
+    %     Inputs:
+    %         M_masked             --- original image with masked
+    %         mask                 --- index matrix of known elements
+    %         args                 --- struct of parameters
+    %         A_l                  --- low rank X -> U (loop l)
+    %         B_l                  --- low rank X -> V (loop l)
+    %     Outputs: 
+    %         obj_iter             --- result of algorithm(inner iteration times)
+    %         X_recon              --- inner return X_recon
+    %--------------------------------------------------------------------------
     t_k = 1;
     lambda = args.lambda;
     M_fro_inv = 1/norm(M_masked, 'fro');
@@ -19,10 +34,11 @@ function [X_recon, obj_iter] = apgl(M_masked, mask, A_l, B_l, args)
         if epsilon_X <= args.tol
             break
         end
+        %% Update
         X_k = X_kp1;
         Y_k = Y_kp1;
         t_k = t_kp1;
-        % eq(31) page 5 col 2
+        % eq(31) page 5 col 2 Obj cal
         obj_val(k) = sum(svd(X_k)) - trace(A_l*X_k*B_l') + ...
             lambda/2 * norm(X_k.*mask - M_masked,'fro') ^2;
             % lambda = 0.06

@@ -1,24 +1,24 @@
 base:
-  img_path: 
+  img_path:
     - "../assets/tree.jpg"
     - "../assets/field.jpg"
   mask_path: "../assets/string.png"
-  save_dir: 
+  save_dir:
     - "../output/fig7/"
     - "../output/fig8/"
-  fig_name: 
+  fig_name:
     - "fig7"
     - "fig8"
   tol: 1e-4
   max_iter: 1000
   r0: 7
-  SVT_power: 0.75
-  delta_2k : 0.29
-  opt_tau  : 1e-1
+  SVT_power: 0.8
+  delta_2k : 0.2
+  opt_tau  : 1e-3
 
 clip_type  : 0 # 0 -> no 1 -> uint8 2 -> 0~1
 outer_iter : 100
-outer_tol  : 1e-3  
+outer_tol  : 1e-3
 inner_iter : 100
 tol        : 1e-4
 rho0       : 1.01

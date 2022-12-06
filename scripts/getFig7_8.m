@@ -21,6 +21,7 @@ for idx = 1:2
         begin = round(([m,n] - [row, col])/2);
         mask(begin(1)+1:begin(1)+row, begin(2)+1:begin(2)+col) = tmp_mask;
     end
+    missing = ~mask;
     masked_fig = rgb_fig .* mask;
 
     %%  ADMM
@@ -31,6 +32,7 @@ for idx = 1:2
     if size(X_l_recon_rank_list,1)  == 1
         admm_recon = reshape(X_l_recon_rank_list,m,n,dim);
     end
+    [~, admm_psnr] = PSNR(rgb_fig, admm_recon, missing, 0);
     %% APGL
     cur_time = datetime('now');
     fprintf("\tStart TNNR-AGPL: %s ->",datestr(cur_time));chosen_algo = "apgl";
@@ -39,6 +41,7 @@ for idx = 1:2
     if size(X_l_recon_rank_list,1) == 1
         apgl_recon = reshape(X_l_recon_rank_list,m,n,dim);
     end
+    [~, apgl_psnr] = PSNR(rgb_fig, apgl_recon, missing, 0);
     %% ADMMAP
     cur_time = datetime('now');
     fprintf("\tStart TNNR-ADMMAP: %s ->",datestr(cur_time));chosen_algo = "admmap";
@@ -47,6 +50,8 @@ for idx = 1:2
     if size(X_l_recon_rank_list,1) == 1
         admmap_recon = reshape(X_l_recon_rank_list,m,n,dim);
     end
+    [~, admmap_psnr] = PSNR(rgb_fig, admmap_recon, missing, 0);
+
     %% baseline config
     obs_p = sum(mask,'all')/m/n;
     max_iter = args.base.max_iter; tol = args.base.tol;r0 = args.base.r0;
@@ -60,6 +65,7 @@ for idx = 1:2
     SVT_recon_B = SVT(masked_fig(:,:,3), mask, tau, step, max_iter, tol);
     SVT_recon = cat(3,SVT_recon_R,SVT_recon_G,SVT_recon_B);
     fprintf(" %.3fs\n",getMSecDiff(cur_time));
+    [~, SVT_psnr] = PSNR(rgb_fig, SVT_recon, missing, 0);
     %% SVP
     cur_time = datetime('now');
     fprintf("\tStart SVP: %s ->",datestr(cur_time));% best r0 = 20;
@@ -69,50 +75,52 @@ for idx = 1:2
     SVP_recon_B = SVP(masked_fig(:,:,3),mask,step,r0,max_iter,tol);
     SVP_recon = cat(3,SVP_recon_R,SVP_recon_G,SVP_recon_B);
     fprintf(" %.3fs\n",getMSecDiff(cur_time));
+    [~, SVP_psnr] = PSNR(rgb_fig, SVP_recon, missing, 0);
     %% OptSpace
-    opt_tau = args.base.opt_tau*10;
     cur_time = datetime('now');
     fprintf("\tStart Optspace: %s ->",datestr(cur_time));
-    Opt_recon_R = optspacev2(masked_fig(:,:,1), mask, r0, opt_tau, max_iter, tol);
-    Opt_recon_G = optspacev2(masked_fig(:,:,2), mask, r0, opt_tau, max_iter, tol);
-    Opt_recon_B = optspacev2(masked_fig(:,:,3), mask, r0, opt_tau, max_iter, tol);
+    Opt_recon_R = optspace(masked_fig(:,:,1), mask, r0, args.base.opt_tau, max_iter, tol);
+    Opt_recon_G = optspace(masked_fig(:,:,2), mask, r0, args.base.opt_tau, max_iter, tol);
+    Opt_recon_B = optspace(masked_fig(:,:,3), mask, r0, args.base.opt_tau, max_iter, tol);
     Opt_recon = cat(3,Opt_recon_R,Opt_recon_G,Opt_recon_B);
     fprintf(" %.3fs\n",getMSecDiff(cur_time));
+    [~, Opt_psnr] = PSNR(rgb_fig, Opt_recon, missing, 0);
+
     %% plot
     figure;
     ha = tight_subplot(2,4,[.01 .01],[0.001 0.001],[.001 .001]) ;
 
     axes(ha(1)); 
     imshow(rgb_fig./ 255, [], 'border', 'tight')
-    title('(a) Original image')
+    title('(a) Original image','FontSize',6)
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(2)); 
     imshow(masked_fig./ 255, [], 'border', 'tight')
-    title('(b) Masked image')
+    title('(b) Masked image','FontSize',6)
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(3)); 
-    imshow(clip(SVT_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
-    title('(c) SVT');  % below the img
+    imshow(clip(SVT_recon,0, 255)./255,[], 'border', 'tight');    % show the recovered image
+    title(['(c) SVT PSNR=',sprintf("%.2f",SVT_psnr)],'FontSize',6);  % below the img
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(4)); 
-    imshow(clip(SVP_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
-    title('(d) SVP');  % below the img
+    imshow(clip(SVP_recon,0, 255)./255,[], 'border', 'tight');    % show the recovered image
+    title(['(d) SVP PSNR=',sprintf("%.2f",SVP_psnr)],'FontSize',6);  % below the img
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(5)); 
-    imshow(clip(Opt_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
-    title('(e) OptSpace');  % below the img
+    imshow(clip(Opt_recon,0, 255)./255,[], 'border', 'tight');    % show the recovered image
+    title(['(e) OptSpace PSNR=',sprintf("%.2f",Opt_psnr)],'FontSize',6);  % below the img
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(6)); 
-    imshow(clip(admm_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
-    title('(f) tnnr-admm');  % below the img
+    imshow(clip(admm_recon,0, 255)./255,[], 'border', 'tight');    % show the recovered image
+    title(['(f) tnnr-admm PSNR=',sprintf("%.2f",admm_psnr)],'FontSize',6);  % below the img
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(7)); 
-    imshow(clip(apgl_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
-    title('(g) tnnr-apgl');  % below the img
+    imshow(clip(apgl_recon,0, 255)./255,[], 'border', 'tight');    % show the recovered image
+    title(['(g) tnnr-apgl PSNR=',sprintf("%.2f",apgl_psnr)],'FontSize',6);  % below the img
     % set(gcf,'color','none'); set(gca,'color','none');
     axes(ha(8)); 
-    imshow(clip(admmap_recon,0,255) ./ 255, 'border', 'tight');    % show the recovered image
-    title('(h) tnnr-admmap');  % below the img
+    imshow(clip(admmap_recon,0, 255)./255,[], 'border', 'tight');    % show the recovered image
+    title(['(h) tnnr-admmap PSNR=',sprintf("%.2f",admmap_psnr)],'FontSize',6);  % below the img
     set(gcf,'color','none'); set(gca,'color','none');
     if ~exist(args.base.save_dir{idx}, 'dir'), mkdir(args.base.save_dir{idx}); end
     save_path = [args.base.save_dir{idx},'/',args.base.fig_name{idx}];

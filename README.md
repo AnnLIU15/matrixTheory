@@ -2,22 +2,23 @@
 
 2022-autumn sysu-seit matrix theory final project
 
-|                            Author                            |                            Email                             |
-| :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [AnnLIU15 (ZhaoY) (github.com)](https://github.com/AnnLIU15) | [liuzhy86@mail2.sysu.edu.cn](mailto:liuzhy86@mail2.sysu.edu.cn) |
+|                          Author                          |                             Email                             |
+| :-------------------------------------------------------: | :------------------------------------------------------------: |
+| [AnnLIU15 (ZhaoY) (github.com)](https://github.com/AnnLIU15) |  [liuzhy86@mail2.sysu.edu.cn](mailto:liuzhy86@mail2.sysu.edu.cn)  |
 |      [zxh1128 (github.com)](https://github.com/zxh1128)      | [zhengxh56@mail2.sysu.edu.cn](mailto:zhengxh56@mail2.sysu.edu.cn) |
 
 <div align='center'>
-    <font color="red" size=4><b>华哥 我的超人</b></font>
+    <font color="red" size=10><b>华哥 我的超人</b></font>
 </div>
+
 ## 报告与PPT
 
-* 报告与PPT的`svg`与`eps`图片都使用[Inkscpae](www.inkscape.org/)软件进行**边缘裁剪**
+* 报告与PPT的 `svg`与 `eps`图片都使用[Inkscpae](www.inkscape.org/)软件进行**边缘裁剪**
 * 报告源文件 [./assets/report.tex](./assets/report.tex)
   * 使用的是neurips2022模板
   * pdf为[./assets/report.pdf](./assets/report.pdf)
     * 使用的是xelatex+pdftex
-    * vscode+texlive编译，配置文件 [.vscode/settings.json](.vscode/settings.json)需要配合`LaTeX`与`LaTeX Workshop`插件使用，编译流程相同的情况下应该可以在**texstudio**类编辑器上运行
+    * vscode+texlive编译，配置文件 [.vscode/settings.json](.vscode/settings.json)需要配合 `LaTeX`与 `LaTeX Workshop`插件使用，编译流程相同的情况下应该可以在**texstudio**类编辑器上运行
 * PPT [./assets/tnnr.pptx](./assets/tnnr.pptx)
 
 ## git 教程
@@ -63,6 +64,7 @@ addpath(genpath(cd)); run("scripts/getFig9.m")
 >   ```
 > * algo         -- 核心算法文件
 > * utils        -- 除了核心算法外的function
+>
 >   * yaml基于[Google Code Archive - Long-term storage for Google Code Project Hosting.](https://code.google.com/archive/p/yamlmatlab/)
 >   * tight_subplot基于[tight_subplot(Nh, Nw, gap, marg_h, marg_w) - File Exchange - MATLAB Central (mathworks.cn)](https://ww2.mathworks.cn/matlabcentral/fileexchange/27991-tight_subplot-nh-nw-gap-marg_h-marg_w)
 > * assets    -- 图像资源
@@ -73,10 +75,14 @@ addpath(genpath(cd)); run("scripts/getFig9.m")
 
 Baseline/对比算法
 
-- [x] SVT 
+- [X] SVT
+
 - [J.-F. Cai, E. J. Candes, and Z. Shen, “A Singular Value Thresholding Algorithm for Matrix Completion.” arXiv, Oct. 17, 2008. Accessed: Dec. 02, 2022.](http://arxiv.org/abs/0810.3286)
-- [x] SVP 
+
+- [X] SVP
+
 - [P. Jain, R. Meka, and I. Dhillon, “Guaranteed Rank Minimization via Singular Value Projection,” in *Advances in Neural Information Processing Systems*, 2010, vol. 23. Accessed: Dec. 02, 2022.](https://proceedings.neurips.cc/paper/2010/hash/08d98638c6fcd194a4b1e6992063e944-Abstract.html)
+
 - [X] OptSpace
 
 ---
