@@ -11,7 +11,6 @@ base:
     - "fig8"
   tol: 1e-4
   max_iter: 1000
-  r0: 7
   SVT_power: 0.8
   delta_2k : 0.2
   opt_tau  : 1e-3
@@ -26,5 +25,5 @@ lambda     : 1e-3
 kappa      : 1e-3
 beta       : 1e-3
 beta_max   : 1e10
-min_R      : 10
-max_R      : 10
+min_R      : 1
+max_R      : 20

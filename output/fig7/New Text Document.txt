@@ -1,0 +1,15 @@
+Start Fig. 7: 07-Dec-2022 00:58:26
+	Start TNNR-ADMM: 07-Dec-2022 00:58:26 -> 610.435s
+	Start TNNR-AGPL: 07-Dec-2022 01:08:37 -> 2102.005s
+	Start TNNR-ADMMAP: 07-Dec-2022 01:43:39 -> 1273.066s
+	Start SVT: 07-Dec-2022 02:04:52 -> 61.394s
+	Start SVP and OptSpace: 07-Dec-2022 02:05:53 -> 4570.527s
+     0    15    19    15     1    15
+
+Start Fig. 8: 07-Dec-2022 03:22:07
+	Start TNNR-ADMM: 07-Dec-2022 03:22:07 -> 777.212s
+	Start TNNR-AGPL: 07-Dec-2022 03:35:04 -> 2573.508s
+	Start TNNR-ADMMAP: 07-Dec-2022 04:17:57 -> 1366.976s
+	Start SVT: 07-Dec-2022 04:40:44 -> 25.331s
+	Start SVP and OptSpace: 07-Dec-2022 04:41:10 -> 675.570s
+     0    11    13     6     1     6

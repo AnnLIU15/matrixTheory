@@ -65,9 +65,9 @@ function [X_l_recon_rank_list, other_info] = tnnr_recon(M_masked, mask, chosen_a
                     break;
                 end
                 X_l = X_lp1;
-                if mod(outer_idx,10) ==0
-                    fprintf("%d -> %.5f\n",outer_idx,early_stop_factor)
-                end
+                % if mod(outer_idx,10) ==0
+                %     fprintf("%d -> %.5f\n",outer_idx,early_stop_factor)
+                % end
             end
             iter_list(rank_idx,dim) = iter_cnt;
             X_l = clip_type(X_l);
