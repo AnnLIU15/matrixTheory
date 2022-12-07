@@ -37,7 +37,7 @@ for idx = 1:2
         if best_admm_psnr < admm_psnr
             best_admm_psnr = admm_psnr;
             best_admm = admm_recon;
-            best_r(4) = rank_idx;
+            best_r(4) = rank_idx + args.min_R - 1;
         end
     end
     
@@ -52,7 +52,7 @@ for idx = 1:2
         if best_apgl_psnr < apgl_psnr
             best_apgl_psnr = apgl_psnr;
             best_apgl = apgl_recon;
-            best_r(5) = rank_idx;
+            best_r(5) = rank_idx + args.min_R - 1;
         end
     end
 
@@ -68,7 +68,7 @@ for idx = 1:2
         if best_admmap_psnr < admmap_psnr
             best_admmap_psnr = admmap_psnr;
             best_admmap = admmap_recon;
-            best_r(6) = rank_idx;
+            best_r(6) = rank_idx + args.min_R - 1;
         end
     end
 
@@ -88,10 +88,10 @@ for idx = 1:2
     [~, best_svt_psnr] = PSNR(rgb_fig, best_svt, missing, 0);
 
     %% SVP AND OptSpace
-    cur_time = datetime('now');
+    cur_time = datetime('now'); step = 1/(1+args.base.delta_2k); %\delta_{2k}<1/3
     fprintf("\tStart SVP and OptSpace: %s ->",datestr(cur_time));% best rank_idx = 20;
     for rank_idx = args.min_R:args.max_R
-        step = 1/(1+args.base.delta_2k); %\delta_{2k}<1/3
+        
         SVP_recon_R = SVP(masked_fig(:,:,1),mask,step,rank_idx,max_iter,tol);
         SVP_recon_G = SVP(masked_fig(:,:,2),mask,step,rank_idx,max_iter,tol);
         SVP_recon_B = SVP(masked_fig(:,:,3),mask,step,rank_idx,max_iter,tol);
@@ -155,6 +155,6 @@ for idx = 1:2
     print(gcf, '-dpdf',[save_path,'.pdf'])
     print(gcf,[save_path,'.jpeg'] ,'-djpeg','-r300')
 end
-% close all;
+close all;
 
 

@@ -7,9 +7,11 @@ args = ReadYaml('../configs/fig9.yaml');
 rgb_fig = imread(args.base.img_path);
 mask = imread(args.base.mask_path);
 mask = (mask(:,:,1) ~= 0);
-rgb_fig = double(rgb_fig)/255;
+rgb_fig = double(rgb_fig);
 [m,n,dim] = size(rgb_fig);
 masked_fig = rgb_fig .* mask;
+
+
 
 %%  ADMM
 cur_time = datetime('now');
@@ -19,7 +21,6 @@ fprintf(" %.3fs\n",getMSecDiff(cur_time));
 if size(X_l_recon_rank_list,1) == 1
     admm_recon = reshape(X_l_recon_rank_list,m,n,dim);
 end
-% imshow(clip(admm_recon,0,255) ./ 255, 'border', 'tight');
 %% APGL
 cur_time = datetime('now');
 fprintf("Start TNNR-AGPL: %s ->",datestr(cur_time));chosen_algo = "apgl";
@@ -72,36 +73,36 @@ figure;
 ha = tight_subplot(2,4,[.01 .01],[0.001 0.001],[.001 .001]) ;
 
 axes(ha(1)); 
-imshow(rgb_fig, [], 'border', 'tight')
-title('(a) Original image')
+imshow(rgb_fig./255, [], 'border', 'tight')
+title('(a) Original image','FontSize',6)
 % set(gcf,'color','none'); set(gca,'color','none');
 axes(ha(2)); 
-imshow(masked_fig, [], 'border', 'tight')
-title('(b) Masked image')
+imshow(masked_fig./255, [], 'border', 'tight')
+title('(b) Masked image','FontSize',6)
 % set(gcf,'color','none'); set(gca,'color','none');
 axes(ha(3)); 
-imshow(clip(SVT_recon,0,1), 'border', 'tight');    % show the recovered image
-title('(c) SVT');  % below the img
+imshow(clip(round(SVT_recon),0, 255)./255,[], 'border', 'tight');    % show the recovered image
+title('(c) SVT','FontSize',6);  % below the img
 % set(gcf,'color','none'); set(gca,'color','none');
 axes(ha(4)); 
-imshow(clip(SVP_recon,0,1), 'border', 'tight');    % show the recovered image
-title('(d) SVP');  % below the img
+imshow(clip(round(SVP_recon),0, 255)./255,[], 'border', 'tight');    % show the recovered image
+title('(d) SVP','FontSize',6);  % below the img
 % set(gcf,'color','none'); set(gca,'color','none');
 axes(ha(5)); 
-imshow(clip(Opt_recon,0,1), 'border', 'tight');    % show the recovered image
-title('(e) Opt');  % below the img
+imshow(clip(round(Opt_recon),0, 255)./255,[], 'border', 'tight');    % show the recovered image
+title('(e) Opt','FontSize',6);  % below the img
 % set(gcf,'color','none'); set(gca,'color','none');
 axes(ha(6)); 
-imshow(clip(admm_recon,0,1), 'border', 'tight');    % show the recovered image
-title('(f) tnnr-admm');  % below the img
+imshow(clip(round(admm_recon),0, 255)./255,[], 'border', 'tight');    % show the recovered image
+title('(f) tnnr-admm','FontSize',6);  % below the img
 % set(gcf,'color','none'); set(gca,'color','none');
 axes(ha(7)); 
-imshow(clip(apgl_recon,0,1), 'border', 'tight');    % show the recovered image
-title('(g) tnnr-apgl');  % below the img
+imshow(clip(round(apgl_recon),0, 255)./255,[], 'border', 'tight');    % show the recovered image
+title('(g) tnnr-apgl','FontSize',6);  % below the img
 % set(gcf,'color','none'); set(gca,'color','none');
 axes(ha(8)); 
-imshow(clip(admmap_recon,0,1), 'border', 'tight');    % show the recovered image
-title('(h) tnnr-admmap');  % below the img
+imshow(clip(round(admmap_recon),0, 255)./255,[], 'border', 'tight');    % show the recovered image
+title('(h) tnnr-admmap','FontSize',6);  % below the img
 set(gcf,'color','none'); set(gca,'color','none');
 %% save
 if ~exist(args.base.save_dir, 'dir'), mkdir(args.base.save_dir); end

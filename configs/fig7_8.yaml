@@ -25,5 +25,5 @@ lambda     : 1e-3
 kappa      : 1e-3
 beta       : 1e-3
 beta_max   : 1e10
-min_R      : 1
-max_R      : 20
+min_R      : 3  # if normalized will perform better!
+max_R      : 15

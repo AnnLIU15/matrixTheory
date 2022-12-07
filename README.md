@@ -8,7 +8,7 @@
 |      [zxh1128 (github.com)](https://github.com/zxh1128)      | [zhengxh56@mail2.sysu.edu.cn](mailto:zhengxh56@mail2.sysu.edu.cn) |
 
 <div align='center'>
-    <font color="red" size=10><b>华哥 我的超人</b></font>
+    <font color="red" size=15><b>华哥 我的超人</b></font>
 </div>
 
 ## 报告与PPT
@@ -18,7 +18,7 @@
   * 使用的是neurips2022模板
   * pdf为[./assets/report.pdf](./assets/report.pdf)
     * 使用的是xelatex+pdftex
-    * vscode+texlive编译，配置文件 [.vscode/settings.json](.vscode/settings.json)需要配合 `LaTeX`与 `LaTeX Workshop`插件使用，编译流程相同的情况下应该可以在**texstudio**类编辑器上运行
+    * vscode+texlive编译，配置文件 [.vscode/settings.json](.vscode/settings.json)需要配合 `LaTeX`与 `LaTeX Workshop`插件使用，编译流程相同的情况下应该可以在**texstudio**等编辑器上运行
 * PPT [./assets/tnnr.pptx](./assets/tnnr.pptx)
 
 ## git 教程
@@ -41,7 +41,7 @@
 
 ## 运行方式
 
-以fig1和fig9为例子
+以fig1和fig9为例子 (需要快速运行请在yaml文件设置为 `min_R = max_R`)
 
 ### Fig1
 
@@ -75,15 +75,9 @@ addpath(genpath(cd)); run("scripts/getFig9.m")
 
 Baseline/对比算法
 
-- [X] SVT
-
-- [J.-F. Cai, E. J. Candes, and Z. Shen, “A Singular Value Thresholding Algorithm for Matrix Completion.” arXiv, Oct. 17, 2008. Accessed: Dec. 02, 2022.](http://arxiv.org/abs/0810.3286)
-
-- [X] SVP
-
-- [P. Jain, R. Meka, and I. Dhillon, “Guaranteed Rank Minimization via Singular Value Projection,” in *Advances in Neural Information Processing Systems*, 2010, vol. 23. Accessed: Dec. 02, 2022.](https://proceedings.neurips.cc/paper/2010/hash/08d98638c6fcd194a4b1e6992063e944-Abstract.html)
-
-- [X] OptSpace
+- [X] SVT [J.-F. Cai, E. J. Candes, and Z. Shen, “A Singular Value Thresholding Algorithm for Matrix Completion.” arXiv, Oct. 17, 2008. ](http://arxiv.org/abs/0810.3286)
+- [X] SVP [P. Jain, R. Meka, and I. Dhillon, “Guaranteed Rank Minimization via Singular Value Projection,” in *Advances in Neural Information Processing Systems*, 2010, vol. 23.](https://proceedings.neurips.cc/paper/2010/hash/08d98638c6fcd194a4b1e6992063e944-Abstract.html)
+- [X] OptSpace [R. H. Keshavan, A. Montanari and S. Oh, &#34;Matrix Completion From a Few Entries,&#34; in IEEE Transactions on Information Theory, vol. 56, no. 6, pp. 2980-2998, June 2010](https://ieeexplore.ieee.org/document/5466511/).
 
 ---
 
@@ -96,5 +90,5 @@ Baseline/对比算法
 ## 要求
 
 * Write a detailed report in LaTex on your whole project, including the background, problem formulation, mathematical method(s) and solution(s), algorithm(s), simulation setting and results, discussions, and conclusions;
-* Compose a compact PPT on your report and make a presentation to your classmates if asked. The length of the PPT should be no longer than 20 slides;
-* Submit your report, PPT, and the source codes of your simulation experiments to the TA no later than December 9th, 2022.
+* Compose a compact PPT on your report and make a presentation to your classmates if asked. The length of the PPT should be **no longer than 20 slides**;
+* Submit your **report, PPT, and the source codes of your simulation experiments** to the TA no later than **December 9th, 2022**.

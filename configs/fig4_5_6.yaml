@@ -14,7 +14,7 @@ base:
   opt_tau  : 1e-3
 clip_type  : 0 # 0 -> no 1 -> uint8 2 -> 0~1
 outer_iter : 100
-outer_tol  : 1e-3  
+outer_tol  : 1e-3
 inner_iter : 200
 tol        : 1e-4
 rho0       : 1.1

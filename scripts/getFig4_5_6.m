@@ -5,8 +5,8 @@ addpath(genpath(cd));
 %% args loading
 args = ReadYaml('../configs/fig4_5_6.yaml');
 tol = args.base.tol; max_iter = args.base.max_iter;
-obs_p_fig = args.obs_p*10-3;
 obs_p_list = 0.4:0.1:0.9;
+obs_p_fig = find(obs_p_list == 0.5);
 obs_p_length = length(obs_p_list);
 %% initial the output mat
 SVT_psnr     = zeros(obs_p_length,1);
@@ -33,14 +33,13 @@ admm_rec_fig   = zeros(obs_p_length,m,n);
 apgl_rec_fig   = zeros(obs_p_length,m,n);
 admmap_rec_fig = zeros(obs_p_length,m,n);
 %%
-args.beta = 1;
-args.lambda = 5e-2;
+
 for idx_obs_p = 1:obs_p_length
 % for idx_obs_p = 3:3
     obs_p = obs_p_list(idx_obs_p);
     
-    fprintf("obs_p : %f \n", obs_p);
-    
+    fprintf("obs_p : %.2f (%s)\n", obs_p, datestr(datetime('now')));
+
     mask = zeros(m, n);
     mask(randperm(m*n, round(obs_p*m*n))) = 1;
     missing = ~mask;
@@ -56,26 +55,25 @@ for idx_obs_p = 1:obs_p_length
     SVT_rec_fig(idx_obs_p,:,:) = SVT_recon;
     
     for rank_level = args.min_R:args.max_R
-        fprintf("rank : %d \n", rank_level);
+%         fprintf("rank : %d \n", rank_level);
         % SVP
         step = 1/(1+args.base.delta_2k);
         SVP_recon = SVP(X_masked, mask, step, rank_level, max_iter, tol);
         % Optspace
-        tau = 1;
         Opt_recon = optspace(X_masked, mask, rank_level, args.base.opt_tau, max_iter, tol);
         
         [~, tmp_psnr] = PSNR(gray_fig_d, SVP_recon, missing, 0);
         SVP_psnr(idx_obs_p)    = max(tmp_psnr,SVP_psnr(idx_obs_p));
-        if SVP_psnr(idx_obs_p) == max(SVP_psnr)
+        if SVP_psnr(idx_obs_p) == tmp_psnr
             SVP_rec_fig(idx_obs_p,:,:) = SVP_recon;
         end
         [~, tmp_psnr] = PSNR(gray_fig_d, Opt_recon, missing, 0);
         Opt_psnr(idx_obs_p)    = max(tmp_psnr,Opt_psnr(idx_obs_p));
-        if Opt_psnr(idx_obs_p) == max(Opt_psnr)
+        if Opt_psnr(idx_obs_p) == tmp_psnr
             Opt_rec_fig(idx_obs_p,:,:) = Opt_recon;
         end
     end
-    fprintf("end SVP OPT \n");
+%     fprintf("end SVP OPT \n");
 
     chosen_algo = "admm";
     [X_admm_recon_rank_list, admm_info] = tnnr_recon(X_masked, mask, chosen_algo, args);
@@ -114,41 +112,41 @@ end
 
 %% plot Fig4
 figure;
-subplot(331)
+ha = tight_subplot(2,4,[.01 .01],[0.001 0.001],[.001 .001]) ;
+axes(ha(1)); 
 imshow(gray_fig, [], 'border', 'tight')
 xlabel('(a) Original image')
 set(gcf,'color','none'); set(gca,'color','none');
-subplot(332)
+axes(ha(2)); 
 imshow(reshape(masked_fig(obs_p_fig,:,:),m,n), [], 'border', 'tight')
 xlabel('(b) Masked image')
 set(gcf,'color','none'); set(gca,'color','none');
-subplot(333);
+axes(ha(3)); 
 imshow(clip(reshape(SVT_rec_fig(obs_p_fig,:,:),m,n),0,255) ./ 255, 'border', 'tight');    % show the recovered image
 % imshow(clip(reshape(SVT_rec_fig(obs_p_fig,:,:),m,n),0,1) , [], 'border', 'tight');    % show the recovered image
 xlabel('(c) SVT');  % below the img
 set(gcf,'color','none'); set(gca,'color','none');
-subplot(334);
+axes(ha(4)); 
 imshow(clip(reshape(SVP_rec_fig(obs_p_fig,:,:),m,n),0,255) ./ 255, 'border', 'tight');    % show the recovered image
 % imshow(clip(reshape(SVP_rec_fig(obs_p_fig,:,:),m,n),0,1) , [], 'border', 'tight');    % show the recovered image
 xlabel('(d) SVP');  % below the img
 set(gcf,'color','none'); set(gca,'color','none');
-subplot(335);
+axes(ha(5)); 
 imshow(clip(reshape(Opt_rec_fig(obs_p_fig,:,:),m,n),0,255) ./ 255, 'border', 'tight');    % show the recovered image
-
 % imshow(clip(reshape(Opt_rec_fig(obs_p_fig,:,:),m,n),0,1) , [], 'border', 'tight');    % show the recovered image
 xlabel('(e) Opt');  % below the img
 set(gcf,'color','none'); set(gca,'color','none');
-subplot(336);
+axes(ha(6)); 
 imshow(clip(reshape(admm_rec_fig(obs_p_fig,:,:),m,n),0,255) ./ 255, 'border', 'tight');    % show the recovered image
 % imshow(clip(reshape(admm_rec_fig(obs_p_fig,:,:),m,n),0,1) , [], 'border', 'tight');    % show the recovered image
 xlabel('(f) tnnr-admm');  % below the img
 set(gcf,'color','none'); set(gca,'color','none');
-subplot(337);
+axes(ha(7)); 
 imshow(clip(reshape(apgl_rec_fig(obs_p_fig,:,:),m,n),0,255) ./ 255, 'border', 'tight');    % show the recovered image
 % imshow(clip(reshape(apgl_rec_fig(obs_p_fig,:,:),m,n),0,1) , 'border', 'tight');    % show the recovered image
 xlabel('(g) tnnr-apgl');  % below the img
 set(gcf,'color','none'); set(gca,'color','none');
-subplot(338);
+axes(ha(8)); 
 imshow(clip(reshape(admmap_rec_fig(obs_p_fig,:,:),m,n),0,255) ./ 255, 'border', 'tight');    % show the recovered image
 % imshow(clip(reshape(admmap_rec_fig(obs_p_fig,:,:),m,n),0,1) , 'border', 'tight');    % show the recovered image
 xlabel('(h) tnnr-admmap');  % below the img
@@ -201,4 +199,4 @@ if ~exist(args.base.save_dir6, 'dir'), mkdir(args.base.save_dir6); end
 save_path = [args.base.save_dir6,'/',args.base.fig_name6];
 print(gcf, '-dpdf',[save_path,'.pdf'])
 print(gcf,[save_path,'.jpeg'] ,'-djpeg','-r300')
-% close all;
+close all;

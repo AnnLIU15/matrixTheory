@@ -6,18 +6,18 @@ base:
   tol: 1e-4
   max_iter: 1000
   r0: 3
-  SVT_power: 0.5
+  SVT_power: 0.8
   delta_2k : 0.2
-  opt_tau  : 1e-3
+  opt_tau  : 1e-2
 clip_type  : 0 # 0 -> no 1 -> uint8 2 -> 0~1
 outer_iter : 100
 outer_tol  : 1e-3
 inner_iter : 100
 tol        : 1e-4
 rho0       : 1.01
-lambda     : 0.05
+lambda     : 1e-2
 kappa      : 1e-3
-beta       : 1
+beta       : 1e-3
 beta_max   : 1e10
 min_R      : 3
 max_R      : 3
