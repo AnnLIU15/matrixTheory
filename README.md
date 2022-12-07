@@ -8,8 +8,9 @@
 |      [zxh1128 (github.com)](https://github.com/zxh1128)      | [zhengxh56@mail2.sysu.edu.cn](mailto:zhengxh56@mail2.sysu.edu.cn) |
 
 <div align='center'>
-    <font color="red" size=15><b>华哥 我的超人</b></font>
+    <font color="red" size=10><b>华哥 我的超人</b></font>
 </div>
+~~点解html无法在GitHub上正常显示字号和颜色捏~~
 
 ## 报告与PPT
 
@@ -86,6 +87,14 @@ Baseline/对比算法
 * - [X] TNNR-ADMM
 * - [X] TNNR-APGL
 * - [X] TNNR-ADMMAP
+
+>  在我们复现的代码中，归一化会有更好的效果，Fig4~8未作归一化（结果更接近），Fig9归一化了（不想调超参了）。复现结果与作者论文展示的效果存在差异，作者参数在本复现代码中无法发挥良好，不清楚作者图像是否做了预处理，以下为一些差异：
+>
+>  * 运算时间：我们的复原在运算时间上无法完成tnnr-admmap快于tnnr-admm的效果，可能是由于我们设置的$\rho_0$较为保守（按照作者的设置会发散）
+>  * 效果：APGL在图像复原的效果无法达到作者展示的清晰度
+>  * Baseline 在人工生成环境表现过好，在图像mask环境中表现较差
+>
+>  由于没时间了，没法调最好的超参Orz
 
 ## 要求
 
