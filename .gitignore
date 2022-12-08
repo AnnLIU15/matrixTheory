@@ -12,3 +12,7 @@ ref/
 *.fls
 *.fdb_latexmk
 *.out
+report/tnnr.pptx
+*.pptx
+report/output
+*.svg
