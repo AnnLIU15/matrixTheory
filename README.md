@@ -8,8 +8,9 @@
 |      [zxh1128 (github.com)](https://github.com/zxh1128)      | [zhengxh56@mail2.sysu.edu.cn](mailto:zhengxh56@mail2.sysu.edu.cn) |
 
 <div align='center'>
-    <font color="red" size=10><b>华哥 我的超人</b></font>
+    <font color="red" size=10><b>炀神 真正的超人&#x1F9B8;</b></font>
 </div>
+
 ~~点解html无法在GitHub上正常显示字号和颜色捏~~
 
 ## 报告与PPT
