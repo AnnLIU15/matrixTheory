@@ -107,5 +107,6 @@
     "latex-workshop.latex.recipe.default": "lastUsed",
     // 用于反向同步的内部查看器的键绑定。ctrl/cmd +点击(默认)或双击
     "latex-workshop.view.pdf.internal.synctex.keybinding": "double-click",
-    "editor.wordWrap": "wordWrapColumn"
+    "editor.wordWrap": "wordWrapColumn",
+    "latex.linter.enabled": false
 }

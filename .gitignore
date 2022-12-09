@@ -16,3 +16,4 @@ report/tnnr.pptx
 *.pptx
 report/output
 *.svg
+report/assets/*.pdf
