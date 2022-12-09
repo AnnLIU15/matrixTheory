@@ -41,6 +41,7 @@
 \usepackage{amssymb}
 \usepackage{bm}
 \usepackage{multirow}
+\usepackage{diagbox}
 \newtheorem{definition}{Definition}[section]
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{notations}{Notations}
@@ -113,14 +114,14 @@ where $\mathbf X \in \mathbb{R}^{m \times n}$ and $\mathbf \Omega$ is the set of
 
 Unfortunately, the rank minimization problem is NP-hard in general and is also NP-hard to approximation.  A widely used approach is to apply the nuclear norm (i.e., the sum of singular values) as a convex surrogate for the rank function of a non-convex matrix. It has been shown that under some general constraints, nuclear norm minimization can recover incomplete matrices from enough observed entries.
 
-In this report, we reproduce a matrix completion algorithm called truncated nuclear norm regularization (TNNR) and three optimization schemes proposed by Hu et al\cite{hu.he201309}: the alternating direction method of multipliers (\textbf ADMM), the accelerated proximal gradient line search method (\textbf APGL) and the Alternating Direction Method of Multipliers with Adaptive Penalty (\textbf ADMMAP). 
+In this report, we reproduce a matrix completion algorithm called truncated nuclear norm regularization (TNNR) and three optimization schemes proposed by Hu et al\cite{hu.he201309}: the alternating direction method of multipliers (ADMM), the accelerated proximal gradient line search method (APGL) and the Alternating Direction Method of Multipliers with Adaptive Penalty (ADMMAP). 
 Unlike other nuclear norm methods, TNNR only minimize the smallest $\min(m, n) - r$  singular values since the rank of a matrix only corresponds to the r non-zero singular values. 
 
-In Section \ref{s2}, we briefly introduce three kinds of work related to matrix completion. In Section \ref{s3}, we introduce the TNNR algorithm and three optimization schemes. In Section \ref{s4}, we conduct experiments similar to the original paper and give the experimental results. In Section \ref{s5}, we summarize what we have accomplished.
+In Section~\ref{s2}, we briefly introduce three kinds of work related to matrix completion. In Section~\ref{s3}, we introduce the TNNR algorithm and three optimization schemes. In Section~\ref{s4}, we conduct experiments similar to the original paper and give the experimental results. In Section~\ref{s5}, we summarize what we have accomplished.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[]{assets/fig1.eps}
+    \includegraphics[width=0.6\textwidth]{assets/fig1.eps}
     \caption{A 400 $\times$ 500 image example}
     \label{fig1}
 \end{figure}
@@ -161,14 +162,14 @@ In Section \ref{s2}, we briefly introduce three kinds of work related to matrix 
 \label{s2}
 
 
-In this section, we introduce three methods for matrix completion: Optspace\cite{keshavan.montanari200906}, singular value thresholding (SVT)\cite{cai.shen200810} and singular value projection (SVP)\cite{jain.dhillon2010}. These methods are also used to compare with the TNNR algorithm in subsequent experiments. In addition, ADMM and APDL is is briefly explained for better algorithm derivation in Section \ref{s3}.
+In this section, we introduce three methods for matrix completion: singular value thresholding (SVT)\cite{cai.shen200810},  singular value projection (SVP)\cite{jain.dhillon2010}, and Optspace\cite{keshavan.montanari200906}. These methods are also used to compare with the TNNR algorithm in subsequent experiments. In addition, ADMM and APDL is is briefly explained for better algorithm derivation in Section~\ref{s3}.
 
 By approximating the rank function using the nuclear norm to solve the rank
-minimization problem \eqref{rmin},  the matrix completion problem can be formulated as follows:
+minimization problem~\eqref{rmin},  the matrix completion problem can be formulated as follows:
 \begin{equation}
     \begin{aligned}
         \min_{\mathbf X}\qquad&\quad \lVert\mathbf X\rVert_* \\
-        \text{s.t.}\qquad&\quad  \mathcal{P}_{\mathbf \Omega}(\mathbf X) =  \mathcal{P}_{\mathbf\Omega}(\mathbf M),
+        \text{s.t.}\qquad&\quad  \mathcal{P}_{\mathbf \Omega}(\mathbf X) =  \mathcal{P}_{\mathbf\Omega}(\mathbf M).
     \end{aligned}
     \label{normf}
 \end{equation}
@@ -177,22 +178,22 @@ For SVT, Cai et al. propose the SVT algorithm :
 \begin{equation}
     \begin{aligned}
         \min_{\mathbf X}\qquad&\quad \lVert\mathbf X\rVert_* + \alpha\lVert \mathbf X\rVert_F^2\\
-        \text{s.t.}\qquad&\quad\mathcal{P}_{\mathbf\Omega}(\mathbf X) =  \mathcal{P}_{\mathbf\Omega}(\mathbf M),
+        \text{s.t.}\qquad&\quad\mathcal{P}_{\mathbf\Omega}(\mathbf X) =  \mathcal{P}_{\mathbf\Omega}(\mathbf M).
     \end{aligned}
 \end{equation}
 Construct the Lagrangian function,
 \begin{equation}
     \mathcal{L}(\mathbf X,\mathbf Y) = \lVert\mathbf X\rVert_* + \alpha\lVert \mathbf X\rVert_F^2 + \langle \mathbf Y, P_{\mathbf\Omega}(\mathbf M-\mathbf X) \rangle,
 \end{equation}
-where Lagrangian multipliers $\mathbf Y \in \mathbb{R}^{m \times n}$. SVT solves problem \eqref{normf} using alternating iterative methods,
+where Lagrangian multipliers $\mathbf Y \in \mathbb{R}^{m \times n}$. SVT solves problem~\eqref{normf} using alternating iterative methods,
 \begin{equation}
     \begin{aligned}
-        \mathbf X_k & = D_\tau(\mathbf Y_{k-1})\\
-        \mathbf Y_k & = \mathbf Y_{k+1} + \sigma_k\mathcal{P}_{\mathbf\Omega}(\mathbf M-\mathbf X_k).
+        \mathbf X_{k+1} & = D_\tau(\mathbf Y_{k})\\
+        \mathbf Y_{k+1}& = \mathbf Y_{k} + \sigma_k\mathcal{P}_{\mathbf\Omega}(\mathbf M-\mathbf X_{k+1}).
     \end{aligned}
 \end{equation}
 
-For SVP, rewrite \eqref{normf} as:
+For SVP, rewrite~\eqref{normf} as:
 \begin{equation}
     \begin{aligned}
         \min_{\mathbf X}\qquad&\quad \psi (\mathbf X) = \frac{1}{2}\Vert \mathcal{A}(\mathbf X) - b\Vert_2^2\\
@@ -212,10 +213,10 @@ The iterative equation is
     \end{aligned}
 \end{equation}
 
-For OptSpace, the Lagrangian function of problem \eqref{normf} is
+For OptSpace, the Lagrangian function of problem~\eqref{normf} is
 \begin{equation}
     L(\mathbf X,\mathbf Y) = \min_{\mathbf S\in\mathbb R^{r\times r}} L(\mathbf X,\mathbf Y,\mathbf S) = \frac{1}{2}\lVert\mathcal P_{\mathbf\Omega}(\mathbf M-\mathbf X\mathbf S\mathbf Y^T)\rVert^2_F + \frac{\lambda}{2}\lVert\mathcal P_{\mathbf\Omega^c}(\mathbf M-\mathbf X\mathbf S\mathbf Y^T)
-\rVert^2_F
+\rVert^2_F.
 \end{equation}
 
 
@@ -237,10 +238,10 @@ By dual ascent,
 \begin{equation}
     \begin{aligned}
         (\mathbf x_{k+1},\mathbf w_{k+1}) & \colon = \underset{\mathbf x,\mathbf w}{\min} \mathcal{L}(\mathbf x,\mathbf z_k,\mathbf w)\\
-        z_{k+1} & \colon = \mathbf z_k + \beta (\mathbf A \mathbf x_{k+1} + \mathbf B \mathbf w_{k+1} - \mathbf b).
+        \mathbf z_{k+1} & \colon = \mathbf z_k + \beta (\mathbf A \mathbf x_{k+1} + \mathbf B \mathbf w_{k+1} - \mathbf b).
     \end{aligned}
 \end{equation}
-Change $(\mathbf x,\mathbf w)$ joint optimization to separate alternate iterations and let $\mathbf Y_k = \frac{z_k}{\beta}$,
+Change $(\mathbf x,\mathbf w)$ joint optimization to separate alternate iterations and let $\mathbf y_k = \frac{\mathbf z_k}{\beta}$,
 \begin{equation}
     \begin{aligned}
         \mathbf x_{k+1} &  = \underset{\mathbf x}{\arg\min}\  \mathcal{L}_{\beta}(\mathbf x,\mathbf y_k,\mathbf w_{k})\\
@@ -258,7 +259,7 @@ where $g$ is closed, convex, possibly, nondifferentiable and $f$ is a convex and
 \begin{equation}
     Q(\mathbf X,\mathbf Y) = f(\mathbf Y)+\langle \mathbf X - \mathbf Y, \nabla f(\mathbf Y) \rangle + \frac{1}{2t}\Vert \mathbf X - \mathbf Y \Vert_F^2 +g(\mathbf X).
 \end{equation}
-Then APGL method solves optimization problem \eqref{apgl} by iteratively updating $\mathbf X$, $\mathbf Y$ and $t$. In the $k$-$th$ iteration, we update $\mathbf X_{k+1}$ as the unique minimizer of $Q(\mathbf X, \mathbf Y_k)$:
+Then APGL method solves optimization problem~\eqref{apgl} by iteratively updating $\mathbf X$, $\mathbf Y$ and $t$. In the $k$-$th$ iteration, we update $\mathbf X_{k+1}$ as the unique minimizer of $Q(\mathbf X, \mathbf Y_k)$:
 \begin{equation}
     \mathbf X_{k+1} = \underset{\mathbf X}{\arg\min}\ Q(\mathbf X, \mathbf Y_k) = \underset{\mathbf X}{\arg\min}\ g(\mathbf X)+\frac{1}{2t}\Vert \mathbf X- (\mathbf Y_k -t_k \nabla f(\mathbf Y_k))\Vert_F^2.
 \end{equation}
@@ -315,7 +316,7 @@ This is because
     \end{aligned}
     \label{treq}
 \end{equation}
-Combining \eqref{eq31} and \eqref{treq}, we get
+Combining~\eqref{eq31} and~\eqref{treq}, we get
 \begin{equation}
     \underset{\mathbf A\mathbf A^T=\mathbf I,\mathbf B\mathbf B^T=\mathbf I}{\max} \text{Tr}(\mathbf A\mathbf X\mathbf B^T) \leq \sum_{i=1}^r \sigma_i(\mathbf X).
 \end{equation}
@@ -325,7 +326,7 @@ Then we have
         = \sum_{i=1}^{\min(m,n)} \sigma_i(\mathbf X) - \sum_{i=1}^r \sigma_i(\mathbf X) 
         = \Vert\mathbf X \Vert_r.
 \end{equation}
-Thus, the optimization problem \eqref{obj0} can be rewritten as follows:
+Thus, the optimization problem~\eqref{obj0} can be rewritten as follows:
 \begin{equation}
 \begin{aligned}
     \min_{\mathbf X}\qquad&\quad  \Vert\mathbf X \Vert_* - \underset{\mathbf A\mathbf A^T=\mathbf I,\mathbf B\mathbf B^T=\mathbf I}{\max} \text{Tr}(\mathbf A\mathbf X\mathbf B^T) \\
@@ -334,7 +335,7 @@ Thus, the optimization problem \eqref{obj0} can be rewritten as follows:
 \end{equation}
 where $\mathbf A \in \mathbb{R}^{r \times m}$, $\mathbf B \in \mathbb{R}^{r \times m}$.
 
-Based on \eqref{obj1},  they design a simple but efficient iterative scheme, which is summarized in Algorithm \ref{algo1}. In the $l$th iteration, we first fix $\mathbf X_l$ and compute $\mathbf A_l$ and $\mathbf B_l$ . And then we fix $\mathbf A_l$ and $\mathbf B_l$ ro update $\mathbf X_{l+1}$ by  solving the following problem:
+Based on~\eqref{obj1},  they design a simple but efficient iterative scheme, which is summarized in Algorithm~\ref{algo1}. In the $l$th iteration, we first fix $\mathbf X_l$ and compute $\mathbf A_l$ and $\mathbf B_l$ . And then we fix $\mathbf A_l$ and $\mathbf B_l$ ro update $\mathbf X_{l+1}$ by  solving the following problem:
 \begin{equation}
 \begin{aligned}
     \underset{\mathbf X}{\min}\qquad&\quad \Vert\mathbf X \Vert_* - \text{Tr}(\mathbf A\mathbf X\mathbf B^T) \\
@@ -349,9 +350,9 @@ Based on \eqref{obj1},  they design a simple but efficient iterative scheme, whi
     \textbf{Initialization:} $\mathbf X_1 = \mathcal{P}_{\mathbf\Omega}(\mathbf M)$. 
     \begin{algorithmic}
         \Repeat 
-        \State \textbf{step 1.} Given $\mathbf X_l$, compute $\mathbf U_l, \mathbf \varSigma_l, \mathbf V_l = svd(\mathbf X_l)$, 
+        \State \textbf{step 1.} Given $\mathbf X_l$, compute $[\mathbf U_l, \mathbf \varSigma_l, \mathbf V_l] = \text{svd}(\mathbf X_l)$, 
         \State where $\mathbf U_l = (\bm u_1,\dots,\bm u_m) \in \mathbb{R}^{m \times m}$, $\mathbf V_l = (\bm v_1,\dots,\bm v_m) \in \mathbb{R}^{n \times n}$. 
-        \State Compute $\mathbf A_l$ and $\mathbf B_l$, as $\mathbf A_l = (\bm u_1,\dots,\bm u_m)^T, \ \mathbf B_l = (\bm v_1,\dots,\bm v_m)^T$
+        \State Compute $\mathbf A_l$ and $\mathbf B_l$, as $\mathbf A_l = (\bm u_1,\dots,\bm u_m)^T, \ \mathbf B_l = (\bm v_1,\dots,\bm v_m)^T$.
         \State \textbf{step 2.} Solve $\mathbf X_{l+1} = \underset{\mathbf X}{\arg\min} \Vert\mathbf X \Vert_* - \text{Tr}(\mathbf A\mathbf X\mathbf B^T) \qquad \text{s.t.} \quad \mathcal{P}_{\mathbf\Omega}(\mathbf X) =  \mathcal{P}_{\mathbf\Omega}(\mathbf M)$ 
         \Until{$\Vert\mathbf X_{l+1} -\mathbf X_l \Vert_F \leq \epsilon_0$.}
         \State \Return the recovered matrix.
@@ -363,7 +364,7 @@ Based on \eqref{obj1},  they design a simple but efficient iterative scheme, whi
 \subsection{The optimization using TNNR-ADMM}
 ADMM is a method for solving a decomposable convex optimization problem. It can equivalently decompose the objective function of the original problem into several solvable sub-problems, then solve each sub-problem in parallel, and finally coordinate the solutions of the sub-problems to obtain the global solution of the original problem.
 
-By using ADMM to solve \eqref{obj2}, an optimization algorithm TNNR-ADMM is proposed. First, rewrite \eqref{obj2} as follows:
+By using ADMM to solve~\eqref{obj2}, an optimization algorithm TNNR-ADMM is proposed. First, rewrite~\eqref{obj2} as follows:
 \begin{equation}
     \begin{aligned}
         \underset{\mathbf X,\mathbf W}{\min}\qquad&\quad \Vert\mathbf X \Vert_* - \text{Tr}(\mathbf A_l\mathbf X\mathbf B_l^T) \\
@@ -376,25 +377,22 @@ The augmented lagrange function of is
 \begin{equation}
     L(\mathbf X,\mathbf Y,\mathbf W,\beta) = \Vert\mathbf X \Vert_* - \text{Tr}(\mathbf A_l\mathbf X\mathbf B_l^T) + \frac{\beta}{2}\Vert\mathbf X-\mathbf W \Vert_F^2 + \text{Tr}(\mathbf Y^T(\mathbf X-\mathbf W)),
 \end{equation}
-where $\beta > 0$ is  the penalty parameter. Given the initial setting $\mathbf X_1 = \mathcal{P}_{\mathbf\Omega}(\mathbf M)$, $\mathbf W_1 =\mathbf X_1$, and $\mathbf Y_1 =\mathbf X_1$, the optimization problem \eqref{objadmm} can be solved via the following three steps.
+where $\beta > 0$ is  the penalty parameter. Given the initial setting $\mathbf X_1 = \mathcal{P}_{\mathbf\Omega}(\mathbf M)$, $\mathbf W_1 =\mathbf X_1$, and $\mathbf Y_1 =\mathbf X_1$, the optimization problem~\eqref{objadmm} can be solved via the following three steps.
 
 $\textit{Computing}$  $\mathbf X_{k+1}$. Fix $\mathbf W_k$ and $\mathbf Y_k$, and minimize $L(\mathbf X,\mathbf Y_k,\mathbf W_k,\beta)$ for $\mathbf X_{k+1}$ as follows:
 \begin{equation}
 \begin{aligned}
     \mathbf X_{k+1} & =\underset{\mathbf X}{\arg\min}\ L(\mathbf X,\mathbf Y_k, \mathbf W_k,\beta) \\
-    & =  \underset{\mathbf X}{\arg\min} \ \Vert\mathbf X \Vert_* - \text{Tr}(\mathbf A_l\mathbf W_k\mathbf B_l^T)    + \frac{\beta}{2}\Vert\mathbf X-\mathbf W_k \Vert_F^2 + \text{Tr}(\mathbf Y_k^T(\mathbf X-\mathbf W_k))
+    & =  \underset{\mathbf X}{\arg\min} \ \Vert\mathbf X \Vert_* - \text{Tr}(\mathbf A_l\mathbf W_k\mathbf B_l^T)    + \frac{\beta}{2}\Vert\mathbf X-\mathbf W_k \Vert_F^2 + \text{Tr}(\mathbf Y_k^T(\mathbf X-\mathbf W_k)).
 \end{aligned}
 \end{equation}
 Ignoring constant terms, this can be rewritten as 
-
 \begin{equation}
     \mathbf X_{k+1} = \underset{\mathbf X}{\arg\min} \ \Vert\mathbf X \Vert_* + \frac{\beta}{2} \Vert\mathbf X-\left(\mathbf W_k - \frac{1}{\beta}\mathbf Y_k \right) \Vert_F^2
 \end{equation}
-
-
 By Theorem~\ref{thm32} ,we can solve the above problem as
 \begin{equation}
-    \mathbf X_{k+1} = D_{\frac{1}{\rho}}(\mathbf W_k - \frac{1}{\rho}\mathbf Y_k).
+    \mathbf X_{k+1} = \mathcal{D}_{\frac{1}{\rho}}(\mathbf W_k - \frac{1}{\rho}\mathbf Y_k).
 \label{admmx}
 \end{equation}
 
@@ -413,7 +411,7 @@ then we get
 
 fix the values at the observed entries
 \begin{equation}
-    \mathbf W_{k+1} = \mathcal{P}_{\Omega^c}(\mathbf X_{k+1}) + \mathcal{P}_{\mathbf\Omega}(\mathbf M).
+    \mathbf W_{k+1} = \mathcal{P}_{\mathbf  \Omega^c}(\mathbf X_{k+1}) + \mathcal{P}_{\mathbf \Omega}(\mathbf M).
 \end{equation}
 
 $\textit{Computing}$  $\mathbf Y_{k+1}$. Fix $\mathbf X_{k+1}$ and $\mathbf W_{k+1}$ to calculate $\mathbf Y_{k+1}$ as follows:
@@ -421,17 +419,17 @@ $\textit{Computing}$  $\mathbf Y_{k+1}$. Fix $\mathbf X_{k+1}$ and $\mathbf W_{k
     \mathbf Y_{k+1} = \mathbf Y_{k} + \beta(\mathbf X_{k+1} - \mathbf W_{k+1}).
 \end{equation}
 
-The whole procedure of TNNR-ADMM is summarized in Algorithm \ref{algo2}.
+The whole procedure of TNNR-ADMM is summarized in Algorithm~\ref{algo2}.
 
 
 \begin{algorithm}[t]
     \caption{The Optimization using TNNR-ADMM}
     \label{algo2}
     \textbf{Input:} $\mathbf A_l$, $\mathbf B_l$, $\mathbf M_{\mathbf\Omega}$, and tolerance $\epsilon$ are given.\\
-    \textbf{Initialization:} $\mathbf X_1 = \mathbf M_{\mathbf\Omega}$, $\mathbf W_1 = X_1$, $\mathbf Y_1=\mathbf X_1$, and $\beta = 1$. 
+    \textbf{Initialization:} $\mathbf X_1 = \mathbf M_{\mathbf\Omega}$, $\mathbf W_1 = \mathbf X_1$, $\mathbf Y_1=\mathbf X_1$, and $\beta = 1$. 
     \begin{algorithmic}
         \Repeat 
-        \State \textbf{step 1.} $\mathbf X_{k+1} = D_{\frac{1}{\rho}}(\mathbf W_k - \frac{1}{\rho}\mathbf Y_k)$.
+        \State \textbf{step 1.} $\mathbf X_{k+1} = \mathcal{D}_{\frac{1}{\rho}}(\mathbf W_k - \frac{1}{\rho}\mathbf Y_k)$.
         \State \textbf{step 2.} $\mathbf W_{k+1} = \mathbf X_{k+1} + \frac{1}{\beta}(\mathbf A_l^T\mathbf B_l + \mathbf Y_k)$.
         \State Fix values at observed entries, 
         $\mathbf W_{k+1} = \mathbf X_{k+1} + \frac{1}{\beta}(\mathbf A_l^T\mathbf B_l + \mathbf Y_k)$.
@@ -441,14 +439,14 @@ The whole procedure of TNNR-ADMM is summarized in Algorithm \ref{algo2}.
 \end{algorithm}
 
 \subsection{The optimization using TNNR-APGL}
-Considering the noisy data in the real applications, it is beneficial to relax the constrained problem \eqref{obj2} into
+Considering the noisy data in the real applications, it is beneficial to relax the constrained problem~\eqref{obj2} into
 \begin{equation}
     \min \Vert\mathbf X \Vert_* - \text{Tr}(\mathbf A_l\mathbf X\mathbf B_l^T) + \frac{\lambda}{2}\Vert\mathbf X_{\mathbf\Omega} -\mathbf M_{\mathbf\Omega} \Vert^2_F,
     \label{apglobj}
 \end{equation}
 for some $\lambda >0$.
 
-According to \eqref{apgl}, in problem \eqref{apglobj}, we choose
+According to \eqref{apgl}, in problem~\eqref{apglobj}, we choose
 \begin{equation*}
     g(\mathbf X) = \Vert\mathbf X \Vert_*,
 \end{equation*}
@@ -474,7 +472,7 @@ Finally, $t_{k+1}$ and $\mathbf Y_{k+1}$ are updated as:
     \end{aligned}
 \end{equation}
 
-The procedures of solving (26) are summarized in Algorithm \ref{algo3}.
+The procedures of solving (26) are summarized in Algorithm~\ref{algo3}.
 
 \begin{algorithm}[t]
     \caption{The Optimization using TNNR-APGL}
@@ -495,7 +493,7 @@ The procedures of solving (26) are summarized in Algorithm \ref{algo3}.
 In Algorithm 2, the two constraints are considered separately, but the inconsistency of the two constraints may slow down the convergence.
 By combining the two constraints into a new constraint in a special way and adding an adaptive penalty parameter to speed up the convergence,  a new approach by using the ADMM with adaptive penalty (TNNR-ADMMAP) is proposed.
 \subsubsection{The reformulation of problem }
-To deal with the two constraints simultaneously, in this section, we reformulate the problem \ref{objadmm} as follows:
+To deal with the two constraints simultaneously, in this section, we reformulate the problem~\ref{objadmm} as follows:
 \begin{equation}
     \begin{aligned}
         \underset{\mathbf X}{\min}\qquad&\quad \Vert\mathbf X \Vert_* - \text{Tr}(\mathbf A_l\mathbf X\mathbf B_l^T) \\
@@ -568,11 +566,11 @@ By the definition of the adjoint operator \eqref{adjopt}, the adjoint operators 
     \end{aligned}\label{optab}
 \end{equation}
 
-Let us rewrite the augmented Lagrange function for the optimization problem \eqref{apobj} as 
+Let us rewrite the augmented Lagrange function for the optimization problem~\eqref{apobj} as 
 \begin{equation}
 \mathcal{L}_{AP}(\mathbf X,\mathbf W,\mathbf Y,\beta) = -\text{Tr}(\mathbf A_l\mathbf W\mathbf B_l^T) + \langle\mathbf Y, \mathcal{A}(\mathbf X)+\mathcal{B}(\mathbf W) -\mathcal{C} \rangle + \Vert\mathbf X \Vert_* + \frac{\beta}{2}\Vert \mathcal{A}(\mathbf X)+\mathcal{B}(\mathbf W) -\mathcal{C} \Vert^2_F,
 \end{equation}
-where $\mathbf Y$ is the Lagrange multiplier matrix and $\beta >0$ is the penalty parameter. The iterative scheme of ADMM for problem \eqref{apobj} is given as follows:
+where $\mathbf Y$ is the Lagrange multiplier matrix and $\beta >0$ is the penalty parameter. The iterative scheme of ADMM for problem~\eqref{apobj} is given as follows:
     \begin{align}
         \mathbf X_{k+1} & = \underset{\mathbf X}{\arg\min}\  \mathcal{L}_{AP}(\mathbf X, \mathbf W_k,\mathbf Y_k,\beta) \nonumber\\
         & = \underset{\mathbf X}{\arg\min}\ \frac{\beta}{2}\Vert \mathcal{A}(\mathbf X) + \mathcal{B}(\mathbf W_k) - \mathcal{C} + \frac{1}{\beta}\mathbf Y_{k} \Vert_F^2 + \Vert\mathbf X \Vert_*,
@@ -601,7 +599,7 @@ where $\mathbf Y$ is the Lagrange multiplier matrix and $\beta >0$ is the penalt
 %\end{equation}
 
 \subsubsection{The iterative scheme of TNNR-ADMMAP}
-Based on the iterative scheme \eqref{apx}-\eqref{apy}, TNNR-ADMMAP algorithm is introduced.
+Based on the iterative scheme~\eqref{apx}-\eqref{apy}, TNNR-ADMMAP algorithm is introduced.
 
 $\textit{Computing}$  $\mathbf X_{k+1}$.
 \begin{equation}
@@ -617,9 +615,9 @@ where
         \frac{1}{\beta}(\mathbf Y_k)_{21} & \mathcal{P}_{\mathbf\Omega} + \frac{1}{\beta}(\mathbf Y_k)_{22}
     \end{pmatrix}.
 \end{equation*}
-By Theorem \eqref{thm32}, we get
+By Theorem~\eqref{thm32}, we get
 \begin{equation}
-    \mathbf X_{k+1} = \mathcal{D}\left(\mathbf W_k - \frac{1}{\beta}(\mathbf Y_k)_{11}\right).
+    \mathbf X_{k+1} = \mathcal{D}_{\frac{1}{\beta}}\left(\mathbf W_k - \frac{1}{\beta}(\mathbf Y_k)_{11}\right).
 \end{equation}
 
 $\textit{Computing}$  $\mathbf W_{k+1}$. Setting the first derivative of
@@ -706,16 +704,16 @@ where $\beta_{\max}$ is an upper bound of $\beta_k$. The value of $\rho$ is defi
 \end{equation}
 where $\rho > 1$ is a constant and $\kappa >0 $ is a threshold chosen in advance. When the difference between $(\mathbf X_{k+1}, \mathbf W_{k+1})$ and $(\mathbf X_{k}, \mathbf W_{k})$ is small enough, $\beta_{k+1}$ increases to $\rho_0\beta_k$ and the convergence rate is improved.
 
-The procedures of TNNR-ADMMAP are summarized in Algorithm \ref{algo4}.
+The procedures of TNNR-ADMMAP are summarized in Algorithm~\ref{algo4}.
 
 \begin{algorithm}[t]
     \caption{Inner Optimization by ADMMAP}
     \label{algo4}
     \textbf{Input:} $\mathbf A_l$, $\mathbf B_l$, $\mathbf M_{\mathbf\Omega}$, and tolerance $\epsilon$ are given.\\
-    \textbf{Initialization:} $t_1 = 1$, $\mathbf X_1 = \mathbf M_{\mathbf\Omega}$, $\mathbf Y_1=\mathbf X_1$.
+    \textbf{Initialization:} $\mathbf X_1 = \mathbf M_{\mathbf\Omega}$, $\mathbf W_1=\mathbf X_1$,  $\kappa = 10^{-3}$, $\mathbf Y_1= \mathcal{A}(\mathbf X_1)$.
     \begin{algorithmic}
         \Repeat 
-        \State \textbf{step 1.} $\mathbf X_{k+1} = \mathcal{D}\left(\mathbf W_k - \frac{1}{\beta}(\mathbf Y_k)_{11}\right)$.
+        \State \textbf{step 1.} $\mathbf X_{k+1} = \mathcal{D}_{\frac{1}{\beta}}\left(\mathbf W_k - \frac{1}{\beta}(\mathbf Y_k)_{11}\right)$.
         \State \textbf{step 2.} $\mathbf W_{k+1} = \frac{1}{2\beta} \mathcal{P}_{\mathbf\Omega} [\beta(\mathbf M-\mathbf X_{k+1}) - (\mathbf A_l^T\mathbf B_l + (\mathbf Y_k)_{11}+ (\mathbf Y_k)_{22})]$ \\
         $ \quad\quad\quad\quad\quad\quad\quad\quad+ \mathbf X_{k+1} +  \frac{1}{\beta}(\mathbf A_l^T\mathbf B_l + (\mathbf Y_k)_{11})$.
         \State \textbf{step 3.} $\mathbf Y_{k+1} = \mathbf Y_{k}+\beta[\mathcal{A}(\mathbf X_{k+1})+\mathcal{B}(\mathbf W)-\mathcal{C}]$.
@@ -738,7 +736,7 @@ We generate $m \times n$ matrices of rank $r_0$ by sampling two matrices, i.e., 
 \end{equation*}
 where $\mathbf Z \sim \mathcal{N} (0,1)$. Denote the full noiseless matrix as $\mathbf X_{full}$ and the solution given by an algorithm as $\mathbf X_{sol}$, define a commonly used criterion in matrix completion:
 \begin{equation*}
-    \text{total reconstruction error} = \Vert \mathcal{P}_{\Omega^c}(\mathbf X_{sol}-\mathbf X_{full})\Vert_F.
+    \text{total reconstruction error} = \Vert \mathcal{P}_{\mathbf \Omega^c}(\mathbf X_{sol}-\mathbf X_{full})\Vert_F.
 \end{equation*}
 
 Denote different matrix ranks as $r_0$ and differnet nosie levels as $\sigma$.
@@ -782,7 +780,7 @@ We compare the reconstruction error of the six methods under different setting:
     \caption{ Recovery of an incomplete image with random mask. (The results we reproduced)\label{fig3}}
 \end{figure}
 
-As shown in picture \ref{fig2}, under different noise levels and different observed ratios, compared with the original image:
+As shown in Fig.~\ref{fig2}, under different noise levels and different observed ratios, compared with the original image:
 \begin{itemize}
     \item Our reproduced (abbreviated as our)SVT algorithm has better overall reconstruction error performance.
     
@@ -793,7 +791,7 @@ As shown in picture \ref{fig2}, under different noise levels and different obser
     \item Our TNNR-APGL has a similar performance to the original image.
 \end{itemize}
 
-As shown in picture \ref{fig3}, under different observed ratios, as the
+As shown in Fig.~\ref{fig3}, under different observed ratios, as the
 matrix rank increases, the total reconstruction error becomes larger. Compared with the original image:
 \begin{itemize}
     \item Our SVT algorithm has better overall reconstruction error performance at low ranks, and our implementation of the SVT algorithm deteriorates more rapidly as the matrix rank increases.
@@ -806,47 +804,202 @@ matrix rank increases, the total reconstruction error becomes larger. Compared w
 \end{itemize}
 
 
-\subsection{Real visual data}
-In practice, images may be covered with text etc. For color images, the three channels need to be processed separately and combined to get the final result. We use the peak signal-to-noise ratio (PSNR) to evaluate the performance of different methods, assuming the total number of missing pixels is $T$, then
-\begin{align*}
-    \text{SE} & = error_r^2 + error_g^2 + error_b^2 \\
-    \text{MSE} & = \frac{\text{SE}}{3T} \\
-    \text{PSNR} & = 10\log_{10}(\frac{255^2}{\text{MSE}}).
-\end{align*}
-where SE denotes the total squared error, MSE denotes the total mean squared error.
-
 \subsubsection{Parameter setting}
-In our experiments, the parameters of SVP, SVT, and OptSpace are tuned to achieve the best performance. For TNNR-ADMM, TNNR-APGL and TNNR-ADMMAP, We did not get good results using the original parameters. For TNNR-ADMM, we set $\beta = 10^{-3}$. For TNNR-ADMMAP, we set $\beta_{\max} = 10^{10}$, $\kappa = 10^{-3}$, $\rho_0 = 1.1$ in section \ref{random}, and $\rho_0 = 1.01$ in other sections. For TNNR-APGL, the parameter $\lambda$ is empirically set to be $10^{-2}$ in section \ref{text} and $10^{-3}$ in other sections.
-  
-For the stop conditions of TNNR-ADMM, TNNR-APGL, and TNNR-ADMMAP, we set the tolerance $\epsilon_0$ in Algorithm \ref{algo1} to be $10^{-3}$ and the tolerance $\epsilon$ in Algorithms \ref{algo2}-\ref{algo4} to be $10^{-4}$. Given an incomplete image, for each one of the six algorithms we try all the possible values of $r$ to choose the best results.
+In our experiments, we readjusted the parameters of the six algorithms since the parameters given by the original author are incomplete and can not obtain good experimental results. Table~\ref{t1} shows the parameters set by the original author and us.
+
+%\begin{table}
+%	\caption{The parameters set in the paper}
+%	\label{t1}
+%	\centering
+%	\renewcommand{\arraystretch}{1.25} 
+%	\begin{tabular}{cccccccc}
+%		\toprule
+%		$\beta$  &$\lambda$ &$\beta_{max}$ & $\kappa$& $\rho_0$&$\epsilon_0$ & $\epsilon$  & $rank$\\
+%		\midrule
+%		$10^{-3}$ & $ 0.06 $ &  $10^{10}$ & $10^{-3}$ & $1.9$  & $10^{-3}$ & $10^{-4}$ & $1\sim 20$  \\
+%		\bottomrule
+%	\end{tabular}
+%\end{table}
+
+%
+%\begin{table}
+%	\caption{The parameters set in the paper}
+%	\label{t1}
+%	\centering
+%	\renewcommand{\arraystretch}{1.25} 
+%	\begin{tabular}{cc}
+%		\toprule
+%		parameter & value \\
+%		\midrule
+%		$\beta$  & $10^{-3}$   \\
+%%		\hline
+%		$\lambda$ & $ 0.06 $ \\
+%%		\hline
+%%		\cline{2-3}
+%		 $\beta_{max}$ & $10^{10}$ \\
+%%		\cline{2-3}
+%		$\kappa$ & $10^{-3}$ \\
+%%		\cline{2-3}
+%		$\rho_0$ & $1.9$ \\
+%%		\hline
+%		 $\epsilon_0$ & $10^{-3}$ \\
+%%		\hline
+%		 $\epsilon$ & $10^{-4}$ \\
+%%		\hline
+%		$r$ & $1\sim 20$  \\
+%		\bottomrule
+%	\end{tabular}
+%\end{table}
+
+%\begin{table}
+%	\caption{The parameters set in the paper}
+%	\label{t1}
+%	\centering
+%	\renewcommand{\arraystretch}{1.25} 
+%	\begin{tabular}{ccc}
+%		\toprule
+%		TNNR-ADMM & $\beta$  & $10^{-3}$   \\
+%		\hline
+%		TNNR-APGL & $\lambda$ & $ 0.06 $ \\
+%		\hline
+%		\multirow{4}{*}{TNNR-ADMMAP} & $\beta$ &  $10^{-3}$  \\
+%		\cline{2-3}
+%		& $\beta_{max}$ & $10^{10}$ \\
+%		\cline{2-3}
+%		& $\kappa$ & $10^{-3}$ \\
+%		\cline{2-3}
+%		& $\rho_0$ & $1.9$ \\
+%		\hline
+%		Algorithm~\ref{algo1} & $\epsilon_0$ & $10^{-3}$ \\
+%		\hline
+%		Algorithm~\ref{algo2}-\ref{algo4} & $\epsilon$ & $10^{-4}$ \\
+%		\hline
+%		Iteration rank & $r$ & $1\sim 20$  \\
+%		\bottomrule
+%	\end{tabular}
+%\end{table}
+
+%\begin{table}
+%	\caption{The parameters we set}
+%	\label{t2}
+%	\centering
+%	\renewcommand{\arraystretch}{1.25} 
+%	\begin{tabular}{cccc}
+%		\toprule
+%		 Parameter  & Random mask & Text mask  & Block mask \\
+%		\midrule
+%		$p$ & 0.87 & 0.8 & 0.8 \\
+%		%		\hline
+%		$\delta_{2k}$ & 0.2 & 0.2 & 0.2 \\ 
+%		%		\hline
+%		 $\tau$ & $10^{-3}$ & $10^{-3}$ & $10^{-2}$ \\
+%		%		\hline
+%		 $\beta$  & $10^{-3}$  & $10^{-3}$ & $10^{-3}$\\
+%		%		\hline
+%		 $\lambda$ & $ 10^{-2} $ & $10^{-3}$ & $10^{-3}$ \\
+%		%		\hline
+%%		 $\beta$ &  $10^{-3}$ & $10^{-3}$ & $10^{-3}$\\
+%		%		\cline{2-5}
+%		$\beta_{max}$ & $10^{10}$ & $10^{10}$ & $10^{10}$ \\
+%		%		\cline{2-5}
+%		$\kappa$ & $10^{-3}$ & $10^{-3}$ & $10^{-3}$\\
+%		%		\cline{2-5}
+%		$\rho_0$ & $1.1$ & $1.01$ & $1.01$\\
+%		%		\hline
+%		 $\epsilon_0$ & $10^{-3}$ & $10^{-3}$ & $10^{-3}$\\
+%		%		\hline
+%		 $\epsilon$ & $10^{-4}$ & $10^{-4}$ & $10^{-4}$\\
+%		%		\hline
+%		$rank$ & $5$ & $3\sim 20$ & $3$ \\
+%		%		\hline
+%		 $iter_{max}$ & $10^2$ & $10^2/10^3$ & $10^2/10^3$ \\
+%		\bottomrule
+%	\end{tabular}
+%\end{table}
+
+\begin{table}
+	\caption{The parameters set by the original author and us}
+	\label{t1}
+	\centering
+	\renewcommand{\arraystretch}{1.25} 
+	\begin{tabular}{ccccc}
+		\toprule
+		Parameter  & Random mask & Text mask  & Block mask & Paper set\\
+		\midrule
+		$p$ & 0.87 & 0.8 & 0.8 & \\
+		%		\hline
+		$\delta_{2k}$ & 0.2 & 0.2 & 0.2 & \\ 
+		%		\hline
+		$\tau$ & $10^{-3}$ & $10^{-3}$ & $10^{-2}$ & \\
+		%		\hline
+		$\beta$  & $10^{-3}$  & $10^{-3}$ & $10^{-3}$ & $10^{-3}$\\
+		%		\hline
+		$\lambda$ & $ 10^{-2} $ & $10^{-3}$ & $10^{-3}$ & $0.06$\\
+		%		\hline
+		%		 $\beta$ &  $10^{-3}$ & $10^{-3}$ & $10^{-3}$\\
+		%		\cline{2-5}
+		$\beta_{max}$ & $10^{10}$ & $10^{10}$ & $10^{10}$ & $10^{10}$\\
+		%		\cline{2-5}
+		$\kappa$ & $10^{-3}$ & $10^{-3}$ & $10^{-3}$ & $10^{-3}$\\
+		%		\cline{2-5}
+		$\rho_0$ & $1.1$ & $1.01$ & $1.01$ & $1.9$\\
+		%		\hline
+		$\epsilon_0$ & $10^{-3}$ & $10^{-3}$ & $10^{-3}$ & $10^{-3}$\\
+		%		\hline
+		$\epsilon$ & $10^{-4}$ & $10^{-4}$ & $10^{-4}$ & $10^{-4}$\\
+		%		\hline
+		$rank$ & $5$ & $3\sim 20$ & $3$ & $1\sim 20$\\
+		%		\hline
+		$iter_{max}$ & $10^2$ & $10^2/10^3$ & $10^2/10^3$ & \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
 \subsubsection{Random mask}
 \label{random}
-we randomly cover some pixels of an image ($300 \times 300$), and then compare the recovery performance of the six algorithms.The results are shown in Fig,~\ref{fig4} and \ref{fig5}. Naturally, the larger the observed ratio is the better recovery of the image that can be achieved. Form Fig.~\ref{fig5}, we can see that the TNNR-based algorithms can achieve higher PSNR values compared with the other three methods. Compare with the results in the original paper, our SVT recovers images better. And the results of TNNR-APGL are not as expected in the high observed ratio.
+we randomly cover some pixels of an image ($300 \times 300$), and then compare the recovery performance of the six algorithms.The results are shown in Fig.~\ref{fig4} and Fig.~\ref{fig5}. Naturally, the larger the observed ratio is the better recovery of the image that can be achieved. Form Fig.~\ref{fig5}, we can see that the TNNR-based algorithms can achieve higher PSNR values compared with the other three methods. Compare with the results in the original paper, our SVT recovers images better. And the results of TNNR-APGL are not as expected in the high observed ratio.
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[]{./assets/fig4.eps}
-    \caption{The reconstruction error versus the matrix rank ($r_0$) using the synthetic dataset. (The original result of paper)\label{fig4ori}}
-    
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{./assets/ori-fig4.eps}
+	\caption{The reconstruction error versus the matrix rank ($r_0$) using the synthetic dataset. (The original result of paper)}
+	\label{fig4ori}
 \end{figure}
-\begin{figure}[ht]
-    \centering
-    \includegraphics[]{./assets/fig4.eps}
-    \caption{The reconstruction error versus the matrix rank ($r_0$) using the synthetic dataset. (The result we reproduced)\label{fig4}}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{./assets/fig4.eps}
+	\caption{The reconstruction error versus the matrix rank ($r_0$) using the synthetic dataset. (The result we reproduced)}
+	\label{fig4}
 \end{figure}
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[]{./assets/fig5.eps}
-    \caption{The PSNR values of the recovered image under different
-        observed ratios (random mask) by all six methods. (The original result of paper)\label{fig5ori}}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.6\textwidth]{./assets/ori-fig5.eps}
+	\caption{The PSNR values of the recovered image under different
+		observed ratios (random mask) by all six methods. (The original result of paper)}
+	\label{fig5ori}
 \end{figure}
-\begin{figure}[ht]
-    \centering
-    \includegraphics[]{./assets/fig5.eps}
-    \caption{The PSNR values of the recovered image under different
-        observed ratios (random mask) by all six methods. (The result we reproduced)\label{fig5}}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.6\textwidth]{./assets/fig5.eps}
+	\caption{The PSNR values of the recovered image under different
+		observed ratios (random mask) by all six methods. (The result we reproduced)}
+	\label{fig5}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.6\textwidth]{./assets/ori-fig6.eps}
+	\caption{Iterations needed for our three TNNR-based algorithms to recover the given
+		randomly masked image under different observed ratios. (The original result of paper)}
+	\label{fig6ori}
+\end{figure}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.6\textwidth]{./assets/fig6.eps}
+	\caption{Iterations needed for our three TNNR-based algorithms to recover the given
+		randomly masked image under different observed ratios. (The result we reproduced)}
+	\label{fig6}
 \end{figure}
 
 \subsubsection{Text mask}
@@ -857,82 +1010,100 @@ completion algorithms. Specifically, for the example image
 in Fig.~\ref{fig7}, the PSNR values for SVT, SVP, OptSpace, TNNR-
 ADMM, TNNR-APGL, and TNNR-ADMMAP are 23.47,
 23.47, 22.43, 25.26, 25.26, and 25.27, respectively. And for the
-example image in Fig. 8, the PSNR values for SVT, SVP,
+example image in Fig.~\ref{fig8}, the PSNR values for SVT, SVP,
 OptSpace, TNNR-ADMM, TNNR-APGL, and TNNR-ADMMAP are 21.61, 21.61, 21.95, 23.94, 23.16, and 23.95, respectively. 
 From these results we can see that TNNR-ADMM and TNNR-ADMMAP algorithms achieve better performance than the other three matrix completion algorithms. Our TNNR-APGL cannot obtain the same image restoration effect as the original paper.
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[]{./assets/fig7.eps}
-    \caption{Comparison of matrix completion algorithms for text removal problem. (The original result of paper)\label{fig7ori}}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{./assets/fig7.eps}
+	\caption{Comparison of matrix completion algorithms for text removal problem. (The original result of paper)}
+	\label{fig7ori}
 \end{figure}
-\begin{figure}[ht]
-    \centering
-    \includegraphics[]{./assets/fig7.eps}
-    \caption{Comparison of matrix completion algorithms for text removal problem. (The result we reproduced)\label{fig7}}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{./assets/fig7.eps}
+	\caption{Comparison of matrix completion algorithms for text removal problem. (The result we reproduced)}
+	\label{fig7}
 \end{figure}
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[]{./assets/fig8.eps}
-    \caption{Comparison of matrix completion algorithms for text removal problem. (The original result of paper)\label{fig8ori}}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{./assets/fig8.eps}
+	\caption{Comparison of matrix completion algorithms for text removal problem. (The original result of paper)}
+	\label{fig8ori}
 \end{figure}
-\begin{figure}[ht]
-    \centering
-    \includegraphics[]{./assets/fig8.eps}
-    \caption{Comparison of matrix completion algorithms for text removal problem. (The result we reproduced)\label{fig8}}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{./assets/fig8.eps}
+	\caption{Comparison of matrix completion algorithms for text removal problem. (The result we reproduced)}
+	\label{fig8}
 \end{figure}
 
 
 \subsubsection{Block mask}
 In some situations, Some pixels in the image have been broken. We first mask all these pixels, then we use six matrix completion algorithms to recover these large missing blocks.
-
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[]{./assets/fig9.eps}
-    \caption{Comparison of different methods for recovering missing blocks of
-        a natural image. (The original result of paper)\label{fig9ori}}
+Fig.~\ref{fig9} show the recovered images by using the six different matrix completion algorithms.
+Similar to the text mask, our TNNR-ADMM and TNNR-ADMMAP can recover the image better, but the the image recovered by our TNNR-APGl loses a lot of texture information.
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{./assets/fig9.eps}
+	\caption{Comparison of different methods for recovering missing blocks of
+		a natural image. (The original result of paper)}
+	\label{fig9ori}
 \end{figure}
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[]{./assets/fig9.eps}
-    \caption{Comparison of different methods for recovering missing blocks of
-        a natural image. (The result we reproduced)\label{fig9}}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{./assets/fig9.eps}
+	\caption{Comparison of different methods for recovering missing blocks of
+		a natural image. (The result we reproduced)}
+	\label{fig9}
 \end{figure}
 
 \subsection{Convergence rate and computational cost}
+In the experiments in Fig.~\ref{fig4}, we also tested the total number of iterations for the TNNR algorithm to recover images under different observed ratios. First, from Fig.~\ref{fig5}, we observe that in low observed ratio, the three TNNR-based algorithms have close PSNR again, while in high observed ratio, TNNR-APGL has lower PSNR. As shown in Fig.~\ref{fig6}, TNNR-ADMMAP converges much faster than TNNR-APGL and TNNR-ADMM. The total number of iterations needed for TNNR-ADMMAP to converge is roughly half of that for TNNR-APGL and TNNR-ADMM, while They obtain almost the same result. 
 
+Considering that the time cost of each iteration of the three algorithms is slightly different, in the text mask experiment, we tested the total time required for the six algorithms to recover the image, and the rank of the best PSNR , as shown in the Table~\ref{t3}. The time required for SVT is the shortest. Among the three TNNR-based algorithms, TNNR-ADMM takes the shortest time, and TNNR-APGL takes the longest time. Different from the original work, our implementation of the TNNR-ADMMAP algorithm does not show the convergence speed of the original paper, which is slower than the TNNR-ADMM algorithm, but faster than TNNR-APGL.
 
 \begin{table}
-    \caption{Running time of text masked image recovery}
-    \label{rcost}
-    \centering
-    \begin{tabular}{ccccccc}
-        \toprule
-        \multirow{2}{*}{Method} & \multicolumn{6}{c}{Observed Ratios} \\
-        \cmidrule(r){2-7} 
-        & 0.4 & 0.5 & 0.6 & 0.7 & 0.8  & 0.9 \\
-        \midrule
-        TNNR-ADMM &   &  & & & &   \\
-        TNNR-APGL & & & & & &  \\
-        TNNR-ADMMAP & & & & & &   \\
-        \bottomrule
-    \end{tabular}
+	\caption{The total time required for the six algorithms in text mask experiment}
+	\label{t3}
+	\centering
+	\renewcommand{\arraystretch}{1.25} 
+	\begin{tabular}{ccccc}
+		\toprule
+		\multirow{2}{*}{Algorithm}  & \multicolumn{2}{c}{Fig.~\ref{fig7}} & \multicolumn{2}{c}{Fig.~\ref{fig8}} \\
+		\cmidrule(r){2-3} \cmidrule(r){4-5} 
+		& Total time (s) & Best rank & Total time (s) & Best rank \\
+		\midrule
+		SVT & $60.410$ & no need &   $25.128$ &  no need \\
+%		\hline
+		SVP & $1856.893$ & $15$ & $253.012$ & $11$ \\
+%		\hline
+		OptSpace & $1856.893$ & $15$ & $253.012$ & $13$ \\
+%		\hline
+		TNNR-ADMM &  $371.048$ & $15$ & $314.183$ & $6$\\
+%		\hline
+		TNNR-APGL & $1175.097$ & $3$ & $1509.657$ & $3$\\
+%		\hline
+		TNNR-ADMMAP & $759.241$ & $15$ & $570.614$ & $6$\\
+ 		\bottomrule
+	\end{tabular}
 \end{table}
-
 
 \section{Conclusion}
 \label{s5}
-
+In this report, we replicate the paper by Yao Hu et al. This paper proposes a new matrix completion method called truncated nuclear
+norm regularization. This approach tries to minimize the summation of the smallest $\min (m,n)-r$ singular values, where $r$ is the matrix rank. 
+Moreover, they also designed a two-step iterative solution, and performed three optimizations based on ADMM, APGL, and ADMMAP for the second iteration. We conduct similar experiments on synthetic and real visual datasets and compare with the original results. The experimental results demonstrate the advantages of the TNNR-based algorithms in comparison with
+three matrix completion methods based on the nuclear norm or matrix factorization. However, there are some differences between our reproduction results and the results shown in the author's paper. Because the author's parameters cannot play well in this reproduction, the reason may be that our parameters are not adjusted to the best, or the author may have preprocessed the image.
 
 
 
 %\section*{References}
 
 \medskip
-{\small{}\bibliographystyle{plain}
+{\small{}\bibliographystyle{unsrt}
 \bibliography{report}
 }{\small\par}
 
