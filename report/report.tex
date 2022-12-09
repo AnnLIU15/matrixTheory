@@ -42,6 +42,7 @@
 \usepackage{bm}
 \usepackage{multirow}
 \usepackage{diagbox}
+\usepackage{hyperref}
 \newtheorem{definition}{Definition}[section]
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{notations}{Notations}
@@ -95,9 +96,10 @@
 \begin{abstract}
 Recovering a large matrix from a small subset of its entries is a challenging problem arising in many real applications, such as computer vision. This can be considered as a low rank matrix approximation problem. If the nuclear norm is used as a convex relaxation of the rank operator, all singular values are minimized simultaneously by minimizing the nuclear norm, so the rank is not well approximated in practice. 
 Hu proposed to achieve a better approximation to the rank of matrix by truncated nuclear norm, which is given by the nuclear norm subtracted by the sum of the largest few singular values. Furthermore, they developed a novel matrix completion algorithm and further developed three efficient iterative procedures TNNR-ADMM, TNNR-APGL and TNNR-ADMMAP to solve the optimization problem.
-In this report, we reproduce the algorithm of Hu et al. and related work, and perform experiments similar to their work. Our experiments show encouraging results of the algorithm proposed by Hu et al. in comparison to the related work on both synthetic and real visual datasets.
+In this report, we reproduce the algorithm of Hu et al. and related work, and perform experiments similar to their work. Our experiments show encouraging results of the algorithm proposed by Hu et al. in comparison to the related work on both synthetic and real visual datasets.\footnote{Source code available at: \url{https://github.com/AnnLIU15/matrixTheory}}
 \end{abstract}
 
+% footnote ref: https://arxiv.org/pdf/2108.10026.pdf
 
 \section{Introduction}
 For the problem of estimating missing values in a matrix, or matrix completion, a commonly adoped assumption is the underlying matrix has a low rank or approximately low rank structure.
@@ -114,7 +116,7 @@ where $\mathbf X \in \mathbb{R}^{m \times n}$ and $\mathbf \Omega$ is the set of
 
 Unfortunately, the rank minimization problem is NP-hard in general and is also NP-hard to approximation.  A widely used approach is to apply the nuclear norm (i.e., the sum of singular values) as a convex surrogate for the rank function of a non-convex matrix. It has been shown that under some general constraints, nuclear norm minimization can recover incomplete matrices from enough observed entries.
 
-In this report, we reproduce a matrix completion algorithm called truncated nuclear norm regularization (TNNR) and three optimization schemes proposed by Hu et al\cite{hu.he201309}: the alternating direction method of multipliers (ADMM), the accelerated proximal gradient line search method (APGL) and the Alternating Direction Method of Multipliers with Adaptive Penalty (ADMMAP). 
+In this report, we reproduce a matrix completion algorithm called truncated nuclear norm regularization (TNNR) and three optimization schemes proposed by Hu et al\cite{hu.he201309}: the alternating direction method of multipliers\cite{boyd2011distributed} (ADMM), the accelerated proximal gradient line search method\cite{beck2009fast} (APGL) and the Alternating Direction Method of Multipliers with Adaptive Penalty (ADMMAP). 
 Unlike other nuclear norm methods, TNNR only minimize the smallest $\min(m, n) - r$  singular values since the rank of a matrix only corresponds to the r non-zero singular values. 
 
 In Section~\ref{s2}, we briefly introduce three kinds of work related to matrix completion. In Section~\ref{s3}, we introduce the TNNR algorithm and three optimization schemes. In Section~\ref{s4}, we conduct experiments similar to the original paper and give the experimental results. In Section~\ref{s5}, we summarize what we have accomplished.
@@ -128,7 +130,7 @@ In Section~\ref{s2}, we briefly introduce three kinds of work related to matrix 
 
 \begin{notations}
     Let $\mathbf X = (\mathbf x_1,\cdots,\mathbf x_n)$ be an $m \times n$ matrix, $\mathbf \Omega \in \{1,\cdots,m\}\times\{1,\cdots,n\}$ denote the indices of the observed
-    entries of $\mathbf X$, and let $\mathbf \Omega_c$denote the indices of the missing entries. The Forbenius norm of $\mathbf X$ is defined as $\lVert\mathbf X \rVert_F = \sqrt{\sum_{(i,j)} \mathbf X^2_{i,j}}$. Let $\mathbf X=\mathbf U\mathbf \varSigma \mathbf V^T$ be the singular value decomposition for $\mathbf X$, where $\varSigma = diag(\sigma_i)$, $1 \leq i\leq \min\{m,n\}$, and $\sigma_i$ is the ith largest singular value of $\mathbf X$. The nuclear norm of $\mathbf X$ is denoted as $\lVert\mathbf X \rVert_* = \sum_{i=1}^{\min(m,n)} \sigma_i$ . Let $\mathcal{P}_{\mathbf \Omega}$ be the orthogonal projection operator onto the span of matrices vanishing outside of $\mathbf \Omega$ so that
+    entries of $\mathbf X$, and let $\mathbf \Omega_c$ denote the indices of the missing entries. The Forbenius norm of $\mathbf X$ is defined as $\lVert\mathbf X \rVert_F = \sqrt{\sum_{(i,j)} \mathbf X^2_{i,j}}$. Let $\mathbf X=\mathbf U\mathbf \varSigma \mathbf V^T$ be the singular value decomposition for $\mathbf X$, where $\varSigma = \text{diag}(\sigma_i)$, $1 \leq i\leq \min\{m,n\}$, and $\sigma_i$ is the ith largest singular value of $\mathbf X$. The nuclear norm of $\mathbf X$ is denoted as $\lVert\mathbf X \rVert_* = \sum_{i=1}^{\min(m,n)} \sigma_i$ . Let $\mathcal{P}_{\mathbf \Omega}$ be the orthogonal projection operator onto the span of matrices vanishing outside of $\mathbf \Omega$ so that
     \begin{equation*}
         (\mathcal{P}_{\mathbf \Omega}(\mathbf X))_{ij} = \begin{cases}
             \mathbf X_{ij} & \text{\rm if } (i,j) \in \mathbf \Omega\\
@@ -141,11 +143,11 @@ In Section~\ref{s2}, we briefly introduce three kinds of work related to matrix 
 \begin{definition}
     Consider the SVD of a matrix $\mathbf X \in \mathbb{R}^{m \times n}$:
     \begin{equation}
-        \mathbf X = \mathbf U \mathbf \varSigma \mathbf V^T, \ \mathbf \varSigma = diag(\{\sigma_i\}_{1 \leq \min(m,n)}).
+        \mathbf X = \mathbf U \mathbf \varSigma \mathbf V^T, \ \mathbf \varSigma = \text{diag}(\{\sigma_i\}_{1 \leq \min(m,n)}).
     \end{equation}
-    Define the singular value shrinkage operator $D_{\tau}$ as follows:
+    Define the singular value shrinkage operator $\mathcal D_{\tau}$\cite{cai.shen200810} as follows:
     \begin{equation}
-        D_{\tau}(\mathbf X) = \mathbf U D_{\tau}(\mathbf \varSigma) \mathbf V^T, \ D_{\tau}(\mathbf \varSigma) = diag(\max\{\sigma_i-\tau,0\}).
+        \mathcal D_{\tau}(\mathbf X) = \mathbf U \mathcal D_{\tau}(\mathbf \varSigma) \mathbf V^T, \ \mathcal D_{\tau}(\mathbf \varSigma) = \text{diag}(\max\{\sigma_i-\tau,0\}).
     \end{equation}
     We have the following useful theorem:	
 \end{definition}
@@ -153,7 +155,7 @@ In Section~\ref{s2}, we briefly introduce three kinds of work related to matrix 
 \begin{theorem}
     For each $\tau \geq 0$ and $\mathbf Y \in \mathbb{R}^{m \times n}$, we have
     \begin{equation}
-        D_{\tau}(\mathbf X) = \underset{\mathbf X}{\arg\min}\  \frac{1}{2} \lVert \mathbf X-\mathbf Y\rVert_F^2 + \tau \lVert\mathbf X \lVert_*.
+        \mathcal D_{\tau}(\mathbf X) = \underset{\mathbf X}{\arg\min}\  \frac{1}{2} \lVert \mathbf X-\mathbf Y\rVert_F^2 + \tau \lVert\mathbf X \lVert_*.
     \end{equation} 
     \label{thm32}
 \end{theorem}
@@ -162,10 +164,10 @@ In Section~\ref{s2}, we briefly introduce three kinds of work related to matrix 
 \label{s2}
 
 
-In this section, we introduce three methods for matrix completion: singular value thresholding (SVT)\cite{cai.shen200810},  singular value projection (SVP)\cite{jain.dhillon2010}, and Optspace\cite{keshavan.montanari200906}. These methods are also used to compare with the TNNR algorithm in subsequent experiments. In addition, ADMM and APDL is is briefly explained for better algorithm derivation in Section~\ref{s3}.
+In this section, we introduce three methods for matrix completion: singular value thresholding (SVT)\cite{cai.shen200810},  singular value projection (SVP)\cite{jain.dhillon2010}, and Optspace\cite{keshavan.montanari200906}. These methods are also used to compare with the TNNR algorithm in subsequent experiments. In addition, ADMM and APGL is is briefly explained for better algorithm derivation in Section~\ref{s3}.
 
 By approximating the rank function using the nuclear norm to solve the rank
-minimization problem~\eqref{rmin},  the matrix completion problem can be formulated as follows:
+minimization problem~\eqref{rmin},  the matrix completion problem can be formulated\cite{fazel2002matrix} as follows:
 \begin{equation}
     \begin{aligned}
         \min_{\mathbf X}\qquad&\quad \lVert\mathbf X\rVert_* \\
@@ -197,7 +199,7 @@ For SVP, rewrite~\eqref{normf} as:
 \begin{equation}
     \begin{aligned}
         \min_{\mathbf X}\qquad&\quad \psi (\mathbf X) = \frac{1}{2}\Vert \mathcal{A}(\mathbf X) - b\Vert_2^2\\
-        \text{s.t.}\qquad&\quad\mathbf X \in \mathcal{C}(k) = \{X \colon \text{rank}(\mathbf X) \leq k\},
+        \text{s.t.}\qquad&\quad\mathbf X \in \mathcal{C}(k) = \{\mathbf X \colon \text{rank}(\mathbf X) \leq k\},
     \end{aligned}
 \end{equation}
 where $\mathcal{A}$ is affine transformations that satisfy a restricted isometry property.
@@ -224,7 +226,7 @@ For OptSpace, the Lagrangian function of problem~\eqref{normf} is
 ADMM algorithm is an important method for solving separable convex optimization problems, with fast processing speed and good convergence performance.The classic ADMM algorithm is suitable for solving the following 2-block (or N-block) convex optimization problems.
 \begin{equation}
     \begin{aligned}
-        \underset{x,w}{\min}\qquad&\quad f(\mathbf x) + g(\mathbf w)\\
+        \underset{\mathbf x,\mathbf w}{\min}\qquad&\quad f(\mathbf x) + g(\mathbf w)\\
         \text{s.t.}\qquad&\quad  \mathbf A\mathbf x+\mathbf B\mathbf w = \mathbf b,
     \end{aligned}
     \label{admmlg}
@@ -237,7 +239,7 @@ Using an augmented Lagrangian with a square regularization term with coefficient
 By dual ascent,
 \begin{equation}
     \begin{aligned}
-        (\mathbf x_{k+1},\mathbf w_{k+1}) & \colon = \underset{\mathbf x,\mathbf w}{\min} \mathcal{L}(\mathbf x,\mathbf z_k,\mathbf w)\\
+        (\mathbf x_{k+1},\mathbf w_{k+1}) & \colon = \underset{\mathbf x,\mathbf w}{\min}\ \mathcal{L}(\mathbf x,\mathbf z_k,\mathbf w)\\
         \mathbf z_{k+1} & \colon = \mathbf z_k + \beta (\mathbf A \mathbf x_{k+1} + \mathbf B \mathbf w_{k+1} - \mathbf b).
     \end{aligned}
 \end{equation}
@@ -250,7 +252,7 @@ Change $(\mathbf x,\mathbf w)$ joint optimization to separate alternate iteratio
     \end{aligned}
 \end{equation}
 
-APGL, also called ast iterative shrinkage-thresholding algorithm (FISTA), solves problems like
+APGL, also called as iterative shrinkage-thresholding algorithm (FISTA), solves problems like
 \begin{equation}
     \underset{\mathbf X}{\min} \ g(\mathbf X)+f(\mathbf X),
     \label{apgl}
@@ -271,7 +273,7 @@ Then APGL method solves optimization problem~\eqref{apgl} by iteratively updatin
 \subsection{The approach proposed by Hu et al.}
 By using Truncated nuclear norm, this approach achieves a better approximation of the rank function than the nuclear norm.
 \begin{definition}
-    Given a matrix $\mathbf X \in \mathbb{R}^{m \times n}$, the truncated nuclear norm $\Vert\mathbf X \Vert_r$ is defined as the sum of min$(m,n) - r$  minimum singular values, i.e., $\Vert\mathbf X \Vert_r = \sum_{i=r+1}^{\min(m,n)} \sigma_i(\mathbf X)$ .
+    Given a matrix $\mathbf X \in \mathbb{R}^{m \times n}$, the truncated nuclear norm $\Vert\mathbf X \Vert_r$ is defined as the sum of $\min(m,n) - r$  minimum singular values, i.e., $\Vert\mathbf X \Vert_r = \sum_{i=r+1}^{\min(m,n)} \sigma_i(\mathbf X)$ .
 \end{definition}
 
 Thus, the objective function of this approach can be formulated as follows
@@ -281,7 +283,7 @@ Thus, the objective function of this approach can be formulated as follows
         \text{s.t.}\qquad&\quad  \mathcal{P}_{\mathbf\Omega}(\mathbf X) =  \mathcal{P}_{\mathbf\Omega}(\mathbf M).
     \end{aligned}\label{obj0}
 \end{equation}
-Since $\Vert\mathbf X \Vert_r$ is non-convex, they propose the follow theorem:
+Since $\Vert\mathbf X \Vert_r$ is non-convex, they propose the follow theorem\cite{von1937some}:
 \begin{theorem}
     For any given matrix $\mathbf X \in \mathbb{R}^{m \times n}$, any matrices $\mathbf A \in \mathbb{R}^{r \times m}$, $\mathbf B \in \mathbb{R}^{r \times m}$ that $\mathbf A\mathbf A^T = I_{r \times r}$. For any nonnegative integer $r \ (r \leq \min(m,n))$, we have 
     \begin{equation}
@@ -292,17 +294,17 @@ Since $\Vert\mathbf X \Vert_r$ is non-convex, they propose the follow theorem:
 \end{theorem}
 The proof is given in the Appendix.
 
-Suppose, $\mathbf U\mathbf \varSigma\mathbf V^T$ is the singular value decomposition of $\mathbf X$, where $\mathbf U = (\bm u_1,\dots,\bm u_m) \in \mathbb{R}^{m \times m}$, $\Sigma \in \mathbb{R}^{m \times n}$, and $\mathbf V = (\bm v_1,\dots,\bm v_m) \in \mathbb{R}^{n \times n}$. The equality of holds when 
+Suppose, $\mathbf U\mathbf \varSigma\mathbf V^T$ is the singular value decomposition of $\mathbf X$, where $\mathbf U = (\mathbf u_1,\dots,\mathbf u_m) \in \mathbb{R}^{m \times m}$, $\mathbf \varSigma \in \mathbb{R}^{m \times n}$, and $\mathbf V = (\mathbf v_1,\dots,\mathbf v_m) \in \mathbb{R}^{n \times n}$. The equality of holds when 
 \begin{equation}
-    \mathbf A = (\bm u_1,\dots,\bm u_m)^T, \ \mathbf B = (\bm v_1,\dots,\bm v_m)^T.
+    \mathbf A = (\mathbf u_1,\dots,\mathbf u_m)^T, \ \mathbf B = (\mathbf v_1,\dots,\mathbf v_m)^T.
     \label{}
 \end{equation}
 This is because
 \begin{equation}
     \begin{aligned}
-        \text{Tr} ((\bm u_1,\dots,\bm u_m)^TX(\bm v_1,\dots,\bm v_m))
-        & = \text{Tr} ((\bm u_1,\dots,\bm u_m)^TU\mathbf \varSigma\mathbf V^T(\bm v_1,\dots,\bm v_m)) \\
-        & = \text{Tr} (((\bm u_1,\dots,\bm u_m)^T\mathbf U) \mathbf \varSigma (\mathbf V^T(\bm v_1,\dots,\bm v_m))) \\
+        \text{Tr} ((\mathbf u_1,\dots,\mathbf u_m)^TX(\mathbf v_1,\dots,\mathbf v_m))
+        & = \text{Tr} ((\mathbf u_1,\dots,\mathbf u_m)^TU\mathbf \varSigma\mathbf V^T(\mathbf v_1,\dots,\mathbf v_m)) \\
+        & = \text{Tr} (((\mathbf u_1,\dots,\mathbf u_m)^T\mathbf U) \mathbf \varSigma (\mathbf V^T(\mathbf v_1,\dots,\mathbf v_m))) \\
         & = \text{Tr} \left( \begin{bmatrix}
             \mathbf I_r & 0\\
             0 & 0 
@@ -311,7 +313,7 @@ This is because
             0 & 0 
         \end{bmatrix}
         \right) \\
-        & = \text{Tr}(diag(\sigma_1(\mathbf X),\dots,\sigma_r(\mathbf X),0,\dots,0)) \\
+        & = \text{Tr}(\text{diag}(\sigma_1(\mathbf X),\dots,\sigma_r(\mathbf X),0,\dots,0)) \\
         & = \sum_{i=1}^r \sigma_i(\mathbf X)	
     \end{aligned}
     \label{treq}
@@ -351,8 +353,8 @@ Based on~\eqref{obj1},  they design a simple but efficient iterative scheme, whi
     \begin{algorithmic}
         \Repeat 
         \State \textbf{step 1.} Given $\mathbf X_l$, compute $[\mathbf U_l, \mathbf \varSigma_l, \mathbf V_l] = \text{svd}(\mathbf X_l)$, 
-        \State where $\mathbf U_l = (\bm u_1,\dots,\bm u_m) \in \mathbb{R}^{m \times m}$, $\mathbf V_l = (\bm v_1,\dots,\bm v_m) \in \mathbb{R}^{n \times n}$. 
-        \State Compute $\mathbf A_l$ and $\mathbf B_l$, as $\mathbf A_l = (\bm u_1,\dots,\bm u_m)^T, \ \mathbf B_l = (\bm v_1,\dots,\bm v_m)^T$.
+        \State where $\mathbf U_l = (\mathbf u_1,\dots,\mathbf u_m) \in \mathbb{R}^{m \times m}$, $\mathbf V_l = (\mathbf v_1,\dots,\mathbf v_m) \in \mathbb{R}^{n \times n}$. 
+        \State Compute $\mathbf A_l$ and $\mathbf B_l$, as $\mathbf A_l = (\mathbf u_1,\dots,\mathbf u_m)^T, \ \mathbf B_l = (\mathbf v_1,\dots,\mathbf v_m)^T$.
         \State \textbf{step 2.} Solve $\mathbf X_{l+1} = \underset{\mathbf X}{\arg\min} \Vert\mathbf X \Vert_* - \text{Tr}(\mathbf A\mathbf X\mathbf B^T) \qquad \text{s.t.} \quad \mathcal{P}_{\mathbf\Omega}(\mathbf X) =  \mathcal{P}_{\mathbf\Omega}(\mathbf M)$ 
         \Until{$\Vert\mathbf X_{l+1} -\mathbf X_l \Vert_F \leq \epsilon_0$.}
         \State \Return the recovered matrix.
@@ -491,7 +493,7 @@ The procedures of solving (26) are summarized in Algorithm~\ref{algo3}.
 
 \subsection{The optimization using TNNR-ADMMAP}
 In Algorithm 2, the two constraints are considered separately, but the inconsistency of the two constraints may slow down the convergence.
-By combining the two constraints into a new constraint in a special way and adding an adaptive penalty parameter to speed up the convergence,  a new approach by using the ADMM with adaptive penalty (TNNR-ADMMAP) is proposed.
+By combining the two constraints into a new constraint in a special way\cite{he2012alternating} and adding an adaptive penalty parameter\cite{lin2011linearized} to speed up the convergence,  a new approach by using the ADMM with adaptive penalty (TNNR-ADMMAP) is proposed.
 \subsubsection{The reformulation of problem }
 To deal with the two constraints simultaneously, in this section, we reformulate the problem~\ref{objadmm} as follows:
 \begin{equation}
@@ -1093,7 +1095,7 @@ Considering that the time cost of each iteration of the three algorithms is slig
 
 \section{Conclusion}
 \label{s5}
-In this report, we replicate the paper by Yao Hu et al. This paper proposes a new matrix completion method called truncated nuclear
+In this report, we replicate the paper by Hu et al.\cite{hu.he201309}. This paper proposes a new matrix completion method called truncated nuclear
 norm regularization. This approach tries to minimize the summation of the smallest $\min (m,n)-r$ singular values, where $r$ is the matrix rank. 
 Moreover, they also designed a two-step iterative solution, and performed three optimizations based on ADMM, APGL, and ADMMAP for the second iteration. We conduct similar experiments on synthetic and real visual datasets and compare with the original results. The experimental results demonstrate the advantages of the TNNR-based algorithms in comparison with
 three matrix completion methods based on the nuclear norm or matrix factorization. However, there are some differences between our reproduction results and the results shown in the author's paper. Because the author's parameters cannot play well in this reproduction, the reason may be that our parameters are not adjusted to the best, or the author may have preprocessed the image.
@@ -1180,7 +1182,7 @@ Ignoring all constant terms,
 \end{equation}
 That is 
 \begin{equation}
-    \mathbf X_{k+1} = D_{\frac{1}{\rho}}(\mathbf W_k - \frac{1}{\rho}\mathbf Y_k).
+    \mathbf X_{k+1} = \mathcal D_{\frac{1}{\rho}}(\mathbf W_k - \frac{1}{\rho}\mathbf Y_k).
 \end{equation}
 
 \end{document}
