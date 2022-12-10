@@ -43,6 +43,7 @@
 \usepackage{multirow}
 \usepackage{diagbox}
 \usepackage{hyperref}
+\usepackage{tablefootnote}
 \newtheorem{definition}{Definition}[section]
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{notations}{Notations}
@@ -731,6 +732,32 @@ The procedures of TNNR-ADMMAP are summarized in Algorithm~\ref{algo4}.
 
 In this section, we conduct experiments on synthetic data and real visual data, and compare six matrix completion algorithms: SVT, SVP, OptSapce, TNNR-ADMM, TNNR-APGL, and TNNR-ADMMAP.
 
+
+\subsection{Experimental setup}
+
+Our project code runs in the experimental environment, software and hardware configurations shown in the table~\ref{config}, and requires the installation of related dependencies.
+
+\begin{table}[ht]
+	\caption{The experimental setup}
+	\label{config}
+	\centering
+	\renewcommand{\arraystretch}{2} 
+	\begin{tabular}{ccc}
+		\toprule
+		Category  & Name &  Version \\
+		\midrule
+        System & Windows 10 & 22H2 \\
+		Hardware & CPU & Intel i7-11800H  \\
+        Software & Matlab & R2019b \\
+        \multirow{2}{*}{Dependencies} & yamlmatlab\tablefootnote{\url{https://code.google.com/archive/p/yamlmatlab/}}
+        & 0.4.3   \\
+        & tight\_subplot\tablefootnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/27991-tight_subplot-nh-nw-gap-marg_h-marg_w?s_tid=srchtitle_tight_subplot_1}}
+        & 1.1.0.0 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+
 \subsection{Synthetic data}
 We generate $m \times n$ matrices of rank $r_0$ by sampling two matrices, i.e., $\mathbf M_L \in \mathbb{R}^{m \times r_0} $ and $\mathbf M_R \in \mathbb{R}^{r_0 \times m} $, each having i.i.d. Gaussian entries, and setting $\mathbf M=\mathbf M_l \mathbf M_R$. The localtions of observed indices $\mathbf \Omega$ are sampled uniformly at random. Let $p$ be the  percentage of observed entries over $m \times n$. We generate synthetic data as follows:
 \begin{equation*}
@@ -950,9 +977,9 @@ In our experiments, we readjusted the parameters of the six algorithms since the
 		%		\hline
 		$\epsilon$ & $10^{-4}$ & $10^{-4}$ & $10^{-4}$ & $10^{-4}$\\
 		%		\hline
-		$rank$ & $5$ & $3\sim 20$ & $3$ & $1\sim 20$\\
+		rank & $5$ & $3\sim 20$ & $3$ & $1\sim 20$\\
 		%		\hline
-		$iter_{max}$ & $10^2$ & $10^2/10^3$ & $10^2/10^3$ & \\
+		$\text{iter}_{\max}$ & $10^2$ & $10^2/10^3$ & $10^2/10^3$ & \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -1100,7 +1127,8 @@ norm regularization. This approach tries to minimize the summation of the smalle
 Moreover, they also designed a two-step iterative solution, and performed three optimizations based on ADMM, APGL, and ADMMAP for the second iteration. We conduct similar experiments on synthetic and real visual datasets and compare with the original results. The experimental results demonstrate the advantages of the TNNR-based algorithms in comparison with
 three matrix completion methods based on the nuclear norm or matrix factorization. However, there are some differences between our reproduction results and the results shown in the author's paper. Because the author's parameters cannot play well in this reproduction, the reason may be that our parameters are not adjusted to the best, or the author may have preprocessed the image.
 
-
+In this coursework project, we have thoroughly studied and applied matrix theory for the first time, guided practice by theory, and further mastered knowledge.
+Moreover, through the reproduction of this paper, we generally have a deeper and clearer understanding of low-rank matrix approximation and matrix completion, and used two methods for solve separable convex optimization: ADMM and APGL. In the whole process of learning and practice, we have benefited a lot.
 
 %\section*{References}
 
